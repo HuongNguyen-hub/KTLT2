@@ -52,7 +52,7 @@ public:
  */
 class StrawHat : public Character {
 protected:
-    long long bounty;
+    long long bounty; //tiền truy nã
 
 public:
     StrawHat();
