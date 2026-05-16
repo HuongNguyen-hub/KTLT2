@@ -106,12 +106,12 @@ int Character::getEnergy() const
 
 bool Character::isStrawHat() const
 {
-    return false;
+    return false; //mac dinh cua ng ta
 }
 
 bool Character::isCP9() const
 {
-    return false;
+    return false; //tam thoi de check
 }
 
 /*
@@ -161,7 +161,17 @@ Luffy::Luffy(string name, int hp, int atk, int def,
 int Luffy::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    double damage_temp ;
+    if (hp > 0.5 * maxHp ) damage_temp = atk ;
+    else if (hp > 0.3*maxHp ) damage_temp = 1.15 * atk ;
+    else if (hp >= 0 && hp <0.3 * maxHp) damage_temp = 1.3 *atk ;
+    //lm tron len
+    int damage = ceil (damage_temp);
+    //dua vao ham recieve damage ktra xem con song khong
+    target->receiveDamage(damage) ; //goi ham de tinh alive
+    if(!target->isAlive()) context.morale +=5; //public
+
+    return damage ; //tinh sat thuong nen phai return sat thuong
 }
 
 int Luffy::specialSkill(Character *target, BattleContext &context)
@@ -414,25 +424,28 @@ void Franky::endTurn(BattleContext &context)
  */
 CP9Agent::CP9Agent() : Character()
 {
-    doriki = 0;
+    doriki = 0; //đại diện cho sức mạng tổng thể của đặc vụ
 }
 
 CP9Agent::CP9Agent(string name, int hp, int atk, int def,
                    int speed, int energy, int doriki)
+    :Character(name,hp,atk,def,speed,energy) //inherted from character
 {
-    // TODO: implement
+    this->doriki=doriki;
 }
 
 bool CP9Agent::isCP9() const
 {
-    return true ; //tam thoi de test
+    return true ; //do thuộc lớp CP9-->là CP9
     // TODO: implement
 }
 
 string CP9Agent::str() const
 {
-    // TODO: implement
-    return "";
+    stringstream ss;
+    ss<<"CP9 [ name ="<<name<<" , hp ="<<hp<<", atk ="<<atk<<" , def ="
+    <<def<<", speed ="<<speed<<", energy ="<<energy<<", doriki ="<<doriki<<"]";
+    return ss.str();
 }
 
 /*
