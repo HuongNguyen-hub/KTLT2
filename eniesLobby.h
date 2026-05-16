@@ -39,6 +39,7 @@ public:
     bool isAlive() const;
     string getName() const;
     int getHP() const;
+    int getmaxHp()const ;
     int getEnergy() const;
 
     virtual bool isStrawHat() const;
@@ -82,6 +83,7 @@ public:
 };
 
 class Zoro : public StrawHat {
+private: bool ktra_xem_zoro_ha_guc;
 public:
     Zoro(string name, int hp, int atk, int def,
          int speed, int energy, long long bounty);
@@ -288,6 +290,8 @@ protected:
 public:
     Building(string name, int hp);
     virtual ~Building();
+    int gethp()const;
+    int getmaxHP()const;
 
     void receiveDamage(int damage);
     bool isDestroyed() const;

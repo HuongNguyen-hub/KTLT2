@@ -98,6 +98,11 @@ int Character::getHP() const
 {
     return hp;
 }
+//them ham nay vao dac ta
+int Character::getmaxHp() const
+{
+    return maxHp;
+}
 
 int Character::getEnergy() const
 {
@@ -172,7 +177,7 @@ int Luffy::attack(Character *target, BattleContext &context)
     int damage = ceil(damage_temp);
     // dua vao ham recieve damage ktra xem con song khong
     target->receiveDamage(damage); // goi ham de tinh alive
-    if (!target->isAlive())
+    if (!target->isAlive()&&target->isCP9())
         context.morale += 5; // public
 
     return damage; // trả về lượng sát thương thực tế được tạo ra
@@ -194,7 +199,7 @@ int Luffy::specialSkill(Character *target, BattleContext &context)
     // cap nhat hp thuc te of luffy
     int luffy_damage = (int)ceil(0.08 * maxHp); // luong giam la luong sat thuong
     this->receiveDamage(luffy_damage);
-    if (!target->isAlive()) 
+    if (!target->isAlive()&&target->isCP9()) 
     {
         context.morale +=5;
         ktra_xem_luffy_co_ha_guc_ai_khong =1;
@@ -250,37 +255,79 @@ void Luffy::endTurn(BattleContext &context)
  */
 Zoro::Zoro(string name, int hp, int atk, int def,
            int speed, int energy, long long bounty)
+    :StrawHat (name,hp,atk,def,speed,energy,bounty)
 {
-    // TODO: implement
+    //no need to do
 }
 
 int Zoro::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int enemy_damage = (int) ceil (atk + 0.2*def) ;
+    if(target->getHP() < (int) ceil(0.4* target->getmaxHp())) 
+    enemy_damage = (int) ceil(1.15*enemy_damage);
+    //cap nhat lai hp doi thu sau moi phuong thuc
+    target->receiveDamage(enemy_damage);
+    if (!target->isAlive()&&target->isCP9())
+    {
+        context.morale +=5;
+    }
+    return enemy_damage ;
 }
 
 int Zoro::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if(this->energy <15 ) return 0;
+    this->energy -=15;
+    double enemy_damage_temp =2.2*atk;
+    if(target->getHP() < (int)ceil (0.5 * target->getmaxHp())) 
+    enemy_damage_temp = 1.5 *enemy_damage_temp ;
+    //lam tron den kq cuoi cung
+    int enemy_damage = ceil (enemy_damage_temp);
+    target->receiveDamage(enemy_damage);
+    if(!target->isAlive()&&target->isCP9()) 
+    {
+        this->energy +=8;
+        context.morale+=4;
+        ktra_xem_zoro_ha_guc=true;
+    }
+    return enemy_damage;
 }
 
 int Zoro::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int building_damage = (int) ceil (atk + 0.2*def) ;
+    if(target->gethp() < (int) ceil(0.4* target->getmaxHP())) 
+    building_damage = (int) ceil(1.15*building_damage);
+    //cap nhat lai hp doi thu sau moi phuong thuc
+    target->receiveDamage(building_damage);
+    return building_damage ;
 }
 
 int Zoro::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if(this->energy <15 ) return 0;
+    this->energy -=15;
+    double building_damage_temp =2.2*atk;
+    if(target->gethp() < (int)ceil (0.5 * target->getmaxHP())) 
+    building_damage_temp = 1.5 *building_damage_temp ;
+    //lam tron den kq cuoi cung
+    int building_damage = ceil (building_damage_temp);
+    target->receiveDamage(building_damage);
+    return building_damage;
 }
 
 void Zoro::endTurn(BattleContext &context)
 {
     // TODO: implement
+    if(ktra_xem_zoro_ha_guc)
+    {
+        context.morale+=6;
+        this->atk = ceil (1.05 * this->atk);
+    }
 }
 
 /*
@@ -713,6 +760,16 @@ string Building::str() const
     return "";
 }
 
+//them method
+int Building::gethp() const
+{
+    return hp; //do ben hien tai
+}
+int Building::getmaxHP() const
+{
+    return maxHP;//do ben toi da
+}
+//
 /*
  * MainGate
  */
