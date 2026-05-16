@@ -40,6 +40,8 @@ public:
     string getName() const;
     int getHP() const;
     int getmaxHp()const ;
+    int getdef() const;
+    void setdef(int newDef) ;
     int getEnergy() const;
 
     virtual bool isStrawHat() const;
@@ -98,6 +100,7 @@ public:
 };
 
 class Sanji : public StrawHat {
+private: bool sanji_co_ha_duoc_dt;
 public:
     Sanji(string name, int hp, int atk, int def,
           int speed, int energy, long long bounty);
@@ -292,6 +295,7 @@ public:
     virtual ~Building();
     int gethp()const;
     int getmaxHP()const;
+   
 
     void receiveDamage(int damage);
     bool isDestroyed() const;
