@@ -13,14 +13,14 @@ struct TurnNode;
  */
 class Character {
 protected:
-    string name;
-    int hp;
-    int maxHp;
-    int atk;
-    int def;
-    int speed;
-    int energy;
-    bool alive;
+    string name; //tên nhân vật
+    int hp; // lượng máu hiện tại
+    int maxHp;//lượng máu tối đa 
+    int atk;//chỉ số tấn công cơ bản
+    int def;//chỉ số phòng thủ
+    int speed;//tốc độ hành động của nhân vật
+    int energy;//năng lượng hiện tại dùng để thi triển kĩ năng
+    bool alive;//trạng thái còn khả năng chiến đấu của nhân vật
 
 public:
     Character();
@@ -67,6 +67,7 @@ public:
  * Straw Hat members
  */
 class Luffy : public StrawHat {
+private : bool ktra_xem_luffy_co_ha_guc_ai_khong;
 public:
     Luffy(string name, int hp, int atk, int def,
           int speed, int energy, long long bounty);
@@ -257,17 +258,17 @@ public:
  */
 class BattleContext {
 public:
-    int turnCount;
-    int morale;
-    int alarmLevel;
-    int rescueProgress;
-    int escapeProgress;
-    int busterCallTimer;
-    bool mainGateDestroyed;
-    bool robinRescued;
-    bool bridgeOpened;
-    bool battleEnded;
-    string resultCode;
+    int turnCount; //số lượt diện ra
+    int morale; //tinh thần phe mũ rơm
+    int alarmLevel; //mức báo động tại Enies Lobby
+    int rescueProgress; //tiến độ giải cứu Robin
+    int escapeProgress;//tiến độ rút lui khởi enies lobby
+    int busterCallTimer; //số lượt còn lại trước khi buster xảy ra
+    bool mainGateDestroyed;//cổng chính đã bị phá hay chưa , mặc định false
+    bool robinRescued;//xác định robin đã đc cứu hay chưa , mặc định false
+    bool bridgeOpened;//xác định cầu thoát hiểu được mở hay ch , md false
+    bool battleEnded;//xác định trận đấu kt hay chưa , false
+    string resultCode; //kết quả cuối cùng
 
 public:
     BattleContext();
@@ -279,10 +280,10 @@ public:
  */
 class Building {
 protected:
-    string name;
-    int hp;
-    int maxHP;
-    bool destroyed;
+    string name; //tên công trình
+    int hp; //độ bền hiện tại
+    int maxHP; //độ bền tối đa
+    bool destroyed; //xác định công trình đã bị phá hay chưa
 
 public:
     Building(string name, int hp);

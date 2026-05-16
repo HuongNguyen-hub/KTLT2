@@ -86,7 +86,7 @@ void Character::receiveDamage(int damage)
 
 bool Character::isAlive() const
 {
-    return alive; //thuc hien xong nvu la tra ve kha nang chien dau
+    return alive; // thuc hien xong nvu la tra ve kha nang chien dau
 }
 
 string Character::getName() const
@@ -106,12 +106,12 @@ int Character::getEnergy() const
 
 bool Character::isStrawHat() const
 {
-    return false; //mac dinh cua ng ta
+    return false; // mac dinh cua ng ta
 }
 
 bool Character::isCP9() const
 {
-    return false; //tam thoi de check
+    return false; // tam thoi de check
 }
 
 /*
@@ -124,28 +124,28 @@ StrawHat::StrawHat() : Character()
 
 StrawHat::StrawHat(string name, int hp, int atk, int def,
                    int speed, int energy, long long bounty)
-    :Character (name , hp , atk , def , speed , energy )
-     //do nhan tham so giong lp character nen tien hanh goi lớp cha là character
+    : Character(name, hp, atk, def, speed, energy)
+// do nhan tham so giong lp character nen tien hanh goi lớp cha là character
 {
-   this->bounty = bounty ;
+    this->bounty = bounty;
 }
 
 bool StrawHat::isStrawHat() const
 {
-    return true ; 
-    //do đây là trong lớp StrawHat : lớp mũ rơn
-    //nếu ở lớp khác thì return false
-    // TODO: implement
+    return true;
+    // do đây là trong lớp StrawHat : lớp mũ rơn
+    // nếu ở lớp khác thì return false
+    //  TODO: implement
 }
 
 string StrawHat::str() const
 {
     // TODO: implement
-    stringstream ss ;
-    ss<<"StrawHat [ name ="<<this->name<<", hp ="<<this->hp
-    <<" , atk ="<<atk<<" , def"<<def<<", speed ="<<speed
-    <<" ,energy = "<<energy<<", bounty ="<<bounty<<"]";
-    return ss.str(); //chuyen ve chuoi
+    stringstream ss;
+    ss << "StrawHat [ name =" << this->name << ", hp =" << this->hp
+       << " , atk =" << atk << " , def" << def << ", speed =" << speed
+       << " ,energy = " << energy << ", bounty =" << bounty << "]";
+    return ss.str(); // chuyen ve chuoi
 }
 
 /*
@@ -153,7 +153,7 @@ string StrawHat::str() const
  */
 Luffy::Luffy(string name, int hp, int atk, int def,
              int speed, int energy, long long bounty)
-    :StrawHat(name,hp,atk,def,speed,energy,bounty) //do thua ke tu StrawHat
+    : StrawHat(name, hp, atk, def, speed, energy, bounty) // do thua ke tu StrawHat
 {
     // TODO: implement-->ko can lm gi
 }
@@ -161,40 +161,88 @@ Luffy::Luffy(string name, int hp, int atk, int def,
 int Luffy::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    double damage_temp ;
-    if (hp > 0.5 * maxHp ) damage_temp = atk ;
-    else if (hp > 0.3*maxHp ) damage_temp = 1.15 * atk ;
-    else if (hp >= 0 && hp <0.3 * maxHp) damage_temp = 1.3 *atk ;
-    //lm tron len
-    int damage = ceil (damage_temp);
-    //dua vao ham recieve damage ktra xem con song khong
-    target->receiveDamage(damage) ; //goi ham de tinh alive
-    if(!target->isAlive()) context.morale +=5; //public
+    double damage_temp;
+    if (hp > 0.5 * maxHp)
+        damage_temp = atk;
+    else if (hp > 0.3 * maxHp)
+        damage_temp = 1.15 * atk;
+    else if (hp >= 0 && hp < 0.3 * maxHp)
+        damage_temp = 1.3 * atk;
+    // lm tron len
+    int damage = ceil(damage_temp);
+    // dua vao ham recieve damage ktra xem con song khong
+    target->receiveDamage(damage); // goi ham de tinh alive
+    if (!target->isAlive())
+        context.morale += 5; // public
 
-    return damage ; //tinh sat thuong nen phai return sat thuong
+    return damage; // trả về lượng sát thương thực tế được tạo ra
 }
 
 int Luffy::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (energy < 20 || hp < (int)ceil(0.15 * maxHp))
+        return 0;
+
+    this->energy -= 20; // ton 20 nang luong cho gear second
+    // do luffy sd kĩ năng gear second nên đã gây sát thương cho đối thủ
+    int enemy_damage = (int)ceil(2.0 * atk);
+    target->receiveDamage(enemy_damage); // cap nhat mau doi thu
+    this->atk += 15;
+    this->speed += 15; // speed of luffy
+    context.alarmLevel += 10;
+    // cap nhat hp thuc te of luffy
+    int luffy_damage = (int)ceil(0.08 * maxHp); // luong giam la luong sat thuong
+    this->receiveDamage(luffy_damage);
+    if (!target->isAlive()) 
+    {
+        context.morale +=5;
+        ktra_xem_luffy_co_ha_guc_ai_khong =1;
+    }
+    //luffy còn sống chưa chắc mục tiêu bị hạ gục -->ktra target
+    return enemy_damage ;
 }
 
 int Luffy::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    double temp_damage ;
+    if (this->hp > (int) ceil (0.5 *maxHp)) temp_damage = atk ;
+    else if (this->hp > (int) ceil (0.3 *maxHp)) temp_damage = 1.15 * atk;
+    else if (this->hp >=0) temp_damage = 1.3 *atk;
+    int damage_building = ceil(temp_damage);
+    //cap nhat damage thuc te
+    target->receiveDamage(damage_building);
+    return damage_building; 
+    //do đây là tấn công công trình nên ko có mục tiêu ->bỏ qua 
+    //nv hạ gục mục tiêu
 }
 
 int Luffy::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if(this->energy <20||this->hp<(int) ceil(0.15*maxHp)) return 0;
+    this->energy -=20 ;
+    int buiding_damage = (int) ceil (2.0 *atk); 
+    //cap nhat hp of building
+    target->receiveDamage(buiding_damage);
+    this->speed +=15;
+    this->atk +=15;
+    context.alarmLevel +=10;
+    int hp_loss = (int) ceil (0.08*maxHp);
+    this->receiveDamage(hp_loss);
+    return buiding_damage;
 }
 
 void Luffy::endTurn(BattleContext &context)
 {
     // TODO: implement
+    if(hp < (int) ceil(0.3 * maxHp)) context.morale +=3;
+    if(ktra_xem_luffy_co_ha_guc_ai_khong) 
+    {
+        this->energy +=5;
+        ktra_xem_luffy_co_ha_guc_ai_khong =false ; //reset cho luot sau
+    }
 }
 
 /*
@@ -424,27 +472,27 @@ void Franky::endTurn(BattleContext &context)
  */
 CP9Agent::CP9Agent() : Character()
 {
-    doriki = 0; //đại diện cho sức mạng tổng thể của đặc vụ
+    doriki = 0; // đại diện cho sức mạng tổng thể của đặc vụ
 }
 
 CP9Agent::CP9Agent(string name, int hp, int atk, int def,
                    int speed, int energy, int doriki)
-    :Character(name,hp,atk,def,speed,energy) //inherted from character
+    : Character(name, hp, atk, def, speed, energy) // inherted from character
 {
-    this->doriki=doriki;
+    this->doriki = doriki;
 }
 
 bool CP9Agent::isCP9() const
 {
-    return true ; //do thuộc lớp CP9-->là CP9
+    return true; // do thuộc lớp CP9-->là CP9
     // TODO: implement
 }
 
 string CP9Agent::str() const
 {
     stringstream ss;
-    ss<<"CP9 [ name ="<<name<<" , hp ="<<hp<<", atk ="<<atk<<" , def ="
-    <<def<<", speed ="<<speed<<", energy ="<<energy<<", doriki ="<<doriki<<"]";
+    ss << "CP9 [ name =" << name << " , hp =" << hp << ", atk =" << atk << " , def ="
+       << def << ", speed =" << speed << ", energy =" << energy << ", doriki =" << doriki << "]";
     return ss.str();
 }
 
