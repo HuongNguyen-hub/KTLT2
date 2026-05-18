@@ -41,6 +41,8 @@ public:
     int getHP() const;
     int getmaxHp()const ;
     int getdef() const;
+    int getspeed() const;
+    void setspeed(int newspeed);
     void setdef(int newDef) ;
     int getEnergy() const;
 
@@ -115,6 +117,7 @@ public:
 };
 
 class Nami : public StrawHat {
+private: bool nami_co_win ;
 public:
     Nami(string name, int hp, int atk, int def,
          int speed, int energy, long long bounty);

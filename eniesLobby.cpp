@@ -110,7 +110,15 @@ int Character::getdef() const
 }
 void Character::setdef(int newDef)
 {
-    def=newDef; 
+    def = newDef;
+}
+int Character::getspeed() const
+{
+    return speed;
+}
+void Character::setspeed(int newspeed)
+{
+    speed = newspeed;
 }
 //
 
@@ -344,7 +352,7 @@ void Zoro::endTurn(BattleContext &context)
     {
         context.morale += 6;
         this->atk = ceil(1.05 * this->atk);
-        ktra_xem_zoro_ha_guc=false ; //reset
+        ktra_xem_zoro_ha_guc = false; // reset
     }
 }
 
@@ -375,20 +383,22 @@ int Sanji::attack(Character *target, BattleContext &context)
 int Sanji::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    if(this->energy <18) return 0;
-    this->energy -=18;
-    double enemy_temp = 2.1 * atk ;
+    if (this->energy < 18)
+        return 0;
+    this->energy -= 18;
+    double enemy_temp = 2.1 * atk;
     int enemy_damage = ceil(enemy_temp);
-    //cap nhat sau khi trung don
+    // cap nhat sau khi trung don
     target->receiveDamage(enemy_damage);
-    int reduce_def =8;
-    if(target->getName()=="Jabra") 
+    int reduce_def = 8;
+    if (target->getName() == "Jabra")
     {
-        reduce_def=12;
+        reduce_def = 12;
     }
     int newDef;
     newDef = target->getdef() - reduce_def;
-    if(newDef <0) newDef =0;
+    if (newDef < 0)
+        newDef = 0;
     target->setdef(newDef);
     if (!target->isAlive() && target->isCP9())
     {
@@ -396,14 +406,13 @@ int Sanji::specialSkill(Character *target, BattleContext &context)
         sanji_co_ha_duoc_dt = true;
     }
     return enemy_damage;
-    
 }
 
 int Sanji::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
     double building_temp = this->atk + 0.5 * this->speed;
-    
+
     int building_damage = ceil(building_temp);
     target->receiveDamage(building_damage);
     return building_damage;
@@ -412,22 +421,22 @@ int Sanji::attack(Building *target, BattleContext &context)
 int Sanji::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
-    if(this->energy <18) return 0;
-    this->energy-=18;
-    int building_damage = ceil(2.1*this->atk);
+    if (this->energy < 18)
+        return 0;
+    this->energy -= 18;
+    int building_damage = ceil(2.1 * this->atk);
     target->receiveDamage(building_damage);
-    return building_damage; 
+    return building_damage;
 }
 
 void Sanji::endTurn(BattleContext &context)
 {
     // TODO: implement
-    if(sanji_co_ha_duoc_dt) 
+    if (sanji_co_ha_duoc_dt)
     {
-        context.morale+=8;
+        context.morale += 8;
         this->atk = ceil(1.1 * this->atk);
-        sanji_co_ha_duoc_dt=false ; //reset
-
+        sanji_co_ha_duoc_dt = false; // reset
     }
 }
 
@@ -436,37 +445,85 @@ void Sanji::endTurn(BattleContext &context)
  */
 Nami::Nami(string name, int hp, int atk, int def,
            int speed, int energy, long long bounty)
+    : StrawHat(name, hp, atk, def, speed, energy, bounty)
 {
     // TODO: implement
+    // no need to do
 }
 
 int Nami::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    double enemy_damage_temp = this->atk + 0.3 * target->getdef();
+    int enemy_damage = ceil(enemy_damage_temp);
+    target->receiveDamage(enemy_damage); // cap nhat hp , isAlive
+    if (!target->isAlive() && target->isCP9())
+    {
+        context.morale += 5;
+        this->nami_co_win = true;
+    }
+
+    return enemy_damage;
 }
 
 int Nami::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 20)
+        return 0;
+    energy -= 20;
+    int enemy_damage = this->atk + 40;
+    int speed_actual = target->getspeed() - 10;
+    if (speed_actual < 0)
+        speed_actual = 0;
+    // cap nhat lai speed of doi thu
+    target->setspeed(speed_actual);
+    target->receiveDamage(enemy_damage);
+    context.busterCallTimer += 1;
+    context.alarmLevel -= 5;
+    if (context.alarmLevel < 0)
+        context.alarmLevel = 0;
+    if (!target->isAlive() && target->isCP9())
+    {
+        context.morale += 5;
+        this->nami_co_win = true;
+    }
+    return enemy_damage;
 }
 
 int Nami::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int building_damage = ceil(0.5 * this->atk);
+    target->receiveDamage(building_damage);
+    return building_damage;
 }
 
 int Nami::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 20)
+        return 0;
+    this->energy -= 20;
+    double damage_temp = this->atk + 40;
+    int buidling_damage = ceil(1.5 * damage_temp);
+    target->receiveDamage(buidling_damage);
+    context.busterCallTimer += 1;
+    context.alarmLevel -= 5;
+    if (context.alarmLevel < 0)
+        context.alarmLevel = 0;
+    return buidling_damage;
 }
 
 void Nami::endTurn(BattleContext &context)
 {
     // TODO: implement
+    if(this->nami_co_win) 
+    {
+        this->energy +=6;
+        if(this->energy >100) this->energy =100;
+        this->nami_co_win =false ; //reset
+    }
 }
 
 /*
@@ -833,7 +890,6 @@ int Building::getmaxHP() const
 {
     return maxHP; // do ben toi da
 }
-
 
 //
 /*
