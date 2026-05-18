@@ -74,14 +74,23 @@ void Character::receiveDamage(int damage)
 {
     // TODO: implement
     int sat_thuong_thuc_te = damage - this->def; // ko can dung this do damage va def chi co 1
-    if (sat_thuong_thuc_te < 0)
+    if (sat_thuong_thuc_te < 0 )
+    //hỗi trợ việc hồi máu
         sat_thuong_thuc_te = 0;
+    
     hp = hp - sat_thuong_thuc_te; // cap nhat lai luong mau
     if (hp <= 0)
     {
         hp = 0;
         alive = false;
     }
+}
+
+void Character::heal_hp(int heal_hp)
+{
+    hp=hp+heal_hp;
+    if(hp > maxHp) hp = maxHp ;
+    if(hp>0) alive=true;
 }
 
 bool Character::isAlive() const
@@ -119,6 +128,10 @@ int Character::getspeed() const
 void Character::setspeed(int newspeed)
 {
     speed = newspeed;
+}
+void Character::sethp (int newhp)
+{
+    hp=newhp;
 }
 //
 
@@ -531,26 +544,49 @@ void Nami::endTurn(BattleContext &context)
  */
 Chopper::Chopper(string name, int hp, int atk, int def,
                  int speed, int energy, long long bounty)
+    :StrawHat(name,hp,atk,def,speed,energy,bounty)
 {
     // TODO: implement
+    //no need to do
 }
 
 int Chopper::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int enemy_damage = this->atk ;
+    target->receiveDamage(enemy_damage);
+    if(!target->isAlive() && target->isCP9()) 
+    {
+        context.morale +=5;
+    }
+    return enemy_damage;
 }
 
 int Chopper::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if(this->energy <15)  return 0;
+    this->energy -= 15;
+    /*Do tham số đầu vào ko truyền tất cả các thành viên nên là thành viên có máu hp
+    thấp nhất sẽ do hàm phía sau chọn*/
+    //CHÚ Ý CHOPPER
+    int heal_hp = ceil(35+0.5*this->atk);
+    target->heal_hp(heal_hp);
+    if(target->getName()=="Luffy") 
+    {
+        context.morale +=5;
+        if(context.morale >100) context.morale =100;
+    }
+    return heal_hp;
+    //do không có sát thương nên ta sẽ trả về lượng máu được hồi
 }
 
 int Chopper::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int building_damage = this->atk;
+    target->receiveDamage(building_damage);
+    return building_damage;
 }
 
 void Chopper::endTurn(BattleContext &context)

@@ -36,6 +36,7 @@ public:
     virtual void endTurn(BattleContext& context);
 
     void receiveDamage(int damage);
+    void heal_hp(int heal_hp);
     bool isAlive() const;
     string getName() const;
     int getHP() const;
@@ -44,6 +45,7 @@ public:
     int getspeed() const;
     void setspeed(int newspeed);
     void setdef(int newDef) ;
+    void sethp (int newhp);
     int getEnergy() const;
 
     virtual bool isStrawHat() const;
@@ -364,18 +366,18 @@ struct TurnNode
  */
 class EniesLobbyBattle {
 private:
-    Character** strawHats;
-    int strawHatCount;
+    Character** strawHats; //mảng động lưu các nhân vật bằng mũ rơm
+    int strawHatCount; //số lượng mũ rơm hiện có
 
-    Character** cp9Agents;
-    int cp9Count;
+    Character** cp9Agents; //lưu các đặc vụ cp9
+    int cp9Count; //số lượng đặc vụ cp9 hiện có
 
-    Building** buildings;
-    int buildingCount;
+    Building** buildings; //lưu các công trình trên chiến trường ko quá 5
+    int buildingCount;//số lượng công trình hiện có
 
-    TurnNode* turnOrder;
-    BattleContext context;
-    int maxTurns;
+    TurnNode* turnOrder; //(LINKED LIST)danh sách liên kết đơn quản lí thứ tự hành động các nhân vật
+    BattleContext context;//trạng thái hiện tại của trận đánh
+    int maxTurns;//số lượt tối đa của trận đánh
 
 public:
     EniesLobbyBattle(const string& filename);
