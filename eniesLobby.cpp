@@ -833,25 +833,43 @@ string CP9Agent::str() const
  */
 Lucci::Lucci(string name, int hp, int atk, int def,
              int speed, int energy, int doriki)
+    :CP9Agent(name,hp,atk,def,speed,energy,doriki)
 {
     // TODO: implement
+    //no need to do
 }
 
 int Lucci::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int enemy_damage = ceil(this->atk + 0.05*this->doriki);
+    if(target->getHP()< 0.5 *target->getmaxHp())
+    {
+        enemy_damage = ceil(1.2*enemy_damage);
+    } 
+    target->receiveDamage(enemy_damage);
+    //ko cong morale do ko thman quy tac
+    return enemy_damage;
 }
 
 int Lucci::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+   if (this->energy < 25) return 0;
+    this->energy -= 25;
+    // Bỏ qua 50% phòng thủ
+    int enemy_damage = (int)ceil(2.8 * atk);
+    int passed = (int)ceil(enemy_damage + 0.5 * target->getdef());
+    target->receiveDamage(passed);
+    if (!target->isAlive()&&target->isStrawHat())
+        context.morale = context.morale-10;
+        return enemy_damage;
 }
 
 void Lucci::endTurn(BattleContext &context)
 {
     // TODO: implement
+    if(this->hp < 0.4*this->maxHp) this->atk =ceil(1.05*this->atk);
 }
 
 /*
