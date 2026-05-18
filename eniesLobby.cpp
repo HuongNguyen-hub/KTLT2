@@ -73,28 +73,30 @@ void Character::endTurn(BattleContext &context)
 void Character::receiveDamage(int damage)
 {
     // TODO: implement
-    int sat_thuong_thuc_te = damage - this->def; // ko can dung this do damage va def chi co 1
-    if (sat_thuong_thuc_te < 0)
-        {
-        sat_thuong_thuc_te = 0;
-        damage=0;
-        }
-        
+    if (damage >= 0)
+    {
+        int sat_thuong_thuc_te = damage - this->def; // ko can dung this do damage va def chi co 1
 
-    hp = hp - sat_thuong_thuc_te; // cap nhat lai luong mau
+        if (sat_thuong_thuc_te < 0)
+        {
+            sat_thuong_thuc_te = 0;
+            damage = 0;
+        }
+        hp = hp - sat_thuong_thuc_te; // cap nhat lai luong mau
+    }
+    else // hoi mau
+    {
+        hp += (-damage);
+    }
+
+    if (hp > maxHp)
+        hp = maxHp;
     if (hp <= 0)
     {
         hp = 0;
         alive = false;
     }
-}
-
-void Character::heal_hp(int heal_hp)
-{
-    hp = hp + heal_hp;
-    if (hp > maxHp)
-        hp = maxHp;
-    if (hp > 0)
+    else
         alive = true;
 }
 
@@ -567,7 +569,6 @@ int Chopper::attack(Character *target, BattleContext &context)
     }
     return enemy_damage;
 }
-
 int Chopper::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
@@ -578,15 +579,15 @@ int Chopper::specialSkill(Character *target, BattleContext &context)
     thấp nhất sẽ do hàm phía sau chọn*/
     // CHÚ Ý CHOPPER
     int heal_hp = ceil(35 + 0.5 * this->atk);
-    target->heal_hp(heal_hp);
+    target->receiveDamage(-heal_hp); //hoi mau
     if (target->getName() == "Luffy")
     {
         context.morale += 5;
         if (context.morale > 100)
             context.morale = 100;
     }
-    return heal_hp;
-    // do không có sát thương nên ta sẽ trả về lượng máu được hồi
+    return 0;
+    // do không có sát thương 
 }
 
 int Chopper::attack(Building *target, BattleContext &context)
@@ -600,6 +601,7 @@ int Chopper::attack(Building *target, BattleContext &context)
 void Chopper::endTurn(BattleContext &context)
 {
     // TODO: implement
+    //no need to do
 }
 
 /*
@@ -634,16 +636,16 @@ int Usopp::attack(Character *target, BattleContext &context)
 int Usopp::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    if(this->energy <16)
-    return 0;
-    this->energy -=16;
-    int enemy_damage = ceil (0.8*this->atk);
-    target->setspeed(target->getspeed()-12);
+    if (this->energy < 16)
+        return 0;
+    this->energy -= 16;
+    int enemy_damage = ceil(0.8 * this->atk);
+    target->setspeed(target->getspeed() - 12);
     target->receiveDamage(enemy_damage);
-    context.escapeProgress +=8;
-    if(context.escapeProgress >100) context.escapeProgress =100;
-    return enemy_damage ;
-
+    context.escapeProgress += 8;
+    if (context.escapeProgress > 100)
+        context.escapeProgress = 100;
+    return enemy_damage;
 }
 
 int Usopp::attack(Building *target, BattleContext &context)
@@ -656,21 +658,23 @@ int Usopp::attack(Building *target, BattleContext &context)
 int Usopp::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
-        if(this->energy <16)
-    return 0;
-    this->energy -=16;
-    int building_damage = ceil (0.8*this->atk);
+    if (this->energy < 16)
+        return 0;
+    this->energy -= 16;
+    int building_damage = ceil(0.8 * this->atk);
     target->receiveDamage(building_damage);
-    context.escapeProgress +=8;
-    if(context.escapeProgress >100) context.escapeProgress =100;
-    return building_damage ;
+    context.escapeProgress += 8;
+    if (context.escapeProgress > 100)
+        context.escapeProgress = 100;
+    return building_damage;
 }
 
 void Usopp::endTurn(BattleContext &context)
 {
     // TODO: implement
-    context.morale +=10;
-    if(context.morale >100) context.morale =100;
+    context.morale += 10;
+    if (context.morale > 100)
+        context.morale = 100;
 }
 
 /*
@@ -678,40 +682,121 @@ void Usopp::endTurn(BattleContext &context)
  */
 Franky::Franky(string name, int hp, int atk, int def,
                int speed, int energy, long long bounty)
-               :StrawHat (name,hp,atk,def,speed,energy,bounty)
+    : StrawHat(name, hp, atk, def, speed, energy, bounty)
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 int Franky::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    
-    return 0;
+    double temp = this->atk + 0.3 * this->def;
+    if (target->isCP9())
+        temp = 1.1 * temp;
+    int enemy_damage = ceil(temp);
+    target->receiveDamage(enemy_damage);
+    if (target->isCP9() && !target->isAlive())
+    {
+        context.morale += 5;
+        if (context.morale > 100)
+            context.morale = 100;
+    }
+    if (this->hp < 0.7 * maxHp)
+        check_over_70 = true;
+    if (this->hp < 0.3 * maxHp)
+        check_under_30 = true;
+    return enemy_damage;
 }
 
 int Franky::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
+    // coup de vent
+    if (this->energy >= 30)
+    {
+
+        this->energy -= 30;
+        int enemy_damage = ceil(this->atk * 1.2);
+        target->receiveDamage(enemy_damage);
+        if (!target->isAlive() && target->isCP9())
+        {
+            context.morale += 5;
+            if (context.morale > 100)
+                context.morale = 100;
+        }
+        if (this->hp < ceil(0.7 * maxHp))
+            check_over_70 = true;
+        return enemy_damage;
+    }
+    else if (this->energy >= 20)
+    {
+        this->energy -= 20;
+        double temp = this->atk * 1.8;
+        int new_speed = (target->getspeed() - 8);
+        if (new_speed < 0)
+            new_speed = 0;
+        target->setspeed(new_speed);
+        if (target->getName() == "Lucci")
+            temp = 1.2 * temp;
+        int enemy_damage = ceil(temp);
+        target->receiveDamage(enemy_damage);
+        if (this->hp < ceil(0.7 * maxHp))
+            check_over_70 = true;
+        if (!target->isAlive() && target->isCP9())
+        {
+            context.morale += 5;
+            if (context.morale > 100)
+                context.morale = 100;
+        }
+        return enemy_damage;
+    }
     return 0;
 }
 
 int Franky::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    double temp = this->atk + 0.3 * this->def;
+    int building_damage = ceil(temp);
+    target->receiveDamage(building_damage);
+    return building_damage;
 }
 
 int Franky::specialSkill(Building *target, BattleContext &context)
 {
     // TODO: implement
+    if (this->energy >= 30)
+    {
+
+        this->energy -= 30;
+        int enemy_damage = ceil(this->atk * 1.2);
+        target->receiveDamage(INT_MAX);
+        return INT_MAX; // DESTROYED
+    }
+    else if (this->energy >= 20)
+    {
+        this->energy -= 20;
+        double building_damage = ceil(this->atk * 1.8);
+        target->receiveDamage(building_damage);
+        return building_damage;
+    }
     return 0;
 }
 
 void Franky::endTurn(BattleContext &context)
 {
     // TODO: implement
+    if (check_over_70)
+    {
+        this->def +=5;
+        check_over_70 = false ; //reset
+    }
+    if(check_under_30) 
+    {
+        this->atk = ceil(1.1 *this->atk);
+        check_under_30 = false;
+    }
 }
 
 /*

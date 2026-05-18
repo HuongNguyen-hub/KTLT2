@@ -36,7 +36,7 @@ public:
     virtual void endTurn(BattleContext& context);
 
     void receiveDamage(int damage);
-    void heal_hp(int heal_hp);
+   
     bool isAlive() const;
     string getName() const;
     int getHP() const;
@@ -161,6 +161,10 @@ public:
 };
 
 class Franky : public StrawHat {
+private : 
+bool check_over_70 ;
+bool check_under_30;
+
 public:
     Franky(string name, int hp, int atk, int def,
            int speed, int energy, long long bounty);
