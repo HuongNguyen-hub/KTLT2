@@ -946,7 +946,7 @@ int Kaku::specialSkill(Character *target, BattleContext &context)
 void Kaku::endTurn(BattleContext &context)
 {
     // TODO: implement
-    //no ned to do
+    // no ned to do
 }
 
 /*
@@ -954,11 +954,11 @@ void Kaku::endTurn(BattleContext &context)
  */
 Jabra::Jabra(string name, int hp, int atk, int def,
              int speed, int energy, int doriki)
-    :CP9Agent(name,hp,atk,def,speed,energy,doriki)
-    
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
+
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 int Jabra::attack(Character *target, BattleContext &context)
@@ -966,31 +966,32 @@ int Jabra::attack(Character *target, BattleContext &context)
     // TODO: implement
     int damage = this->atk;
     target->receiveDamage(damage);
-    return damage; //ko morale do co quy dinh o special
+    return damage; // ko morale do co quy dinh o special
 }
 
 int Jabra::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    if(this->energy <18)
-    return 0;
-    this->energy -=18;
-    int damage =ceil (1.5*this->atk);
-    if(this->hp < 0.3 *this->maxHp) damage = ceil(1.25*damage);
+    if (this->energy < 18)
+        return 0;
+    this->energy -= 18;
+    int damage = ceil(1.5 * this->atk);
+    if (this->hp < 0.3 * this->maxHp)
+        damage = ceil(1.25 * damage);
     target->receiveDamage(damage);
-    if(!target->isAlive() && target->isStrawHat())
+    if (!target->isAlive() && target->isStrawHat())
     {
-        context.morale -=5;
-        if(context.morale <0) context.morale =0;
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
     }
     return damage;
-
 }
 
 void Jabra::endTurn(BattleContext &context)
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 /*
@@ -998,6 +999,7 @@ void Jabra::endTurn(BattleContext &context)
  */
 Blueno::Blueno(string name, int hp, int atk, int def,
                int speed, int energy, int doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
 }
@@ -1005,18 +1007,43 @@ Blueno::Blueno(string name, int hp, int atk, int def,
 int Blueno::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = this->atk;
+    target->receiveDamage(damage);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 int Blueno::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 15)
+        return 0;
+    this->energy -= 15;
+    int damage = ceil(1.3 * this->atk);
+    // cap nhat hp
+    if (this->hp > 0.5 * this->maxHp)
+        damage += 20;
+    if (this->hp <= 0.5 * this->maxHp)
+        damage += 40;
+    target->receiveDamage(damage);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 void Blueno::endTurn(BattleContext &context)
 {
     // TODO: implement
+    //no need to do
 }
 
 /*
@@ -1024,6 +1051,7 @@ void Blueno::endTurn(BattleContext &context)
  */
 Kalifa::Kalifa(string name, int hp, int atk, int def,
                int speed, int energy, int doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
 }
@@ -1050,6 +1078,7 @@ void Kalifa::endTurn(BattleContext &context)
  */
 Kumadori::Kumadori(string name, int hp, int atk, int def,
                    int speed, int energy, int doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
 }
@@ -1076,6 +1105,7 @@ void Kumadori::endTurn(BattleContext &context)
  */
 Fukurou::Fukurou(string name, int hp, int atk, int def,
                  int speed, int energy, int doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
 }
