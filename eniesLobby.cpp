@@ -1043,7 +1043,7 @@ int Blueno::specialSkill(Character *target, BattleContext &context)
 void Blueno::endTurn(BattleContext &context)
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 /*
@@ -1059,18 +1059,43 @@ Kalifa::Kalifa(string name, int hp, int atk, int def,
 int Kalifa::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = this->atk;
+    target->receiveDamage(damage);
+    return damage;
 }
 
 int Kalifa::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 18)
+        return 0;
+    this->energy -= 18;
+    int damage = ceil(1.4 * this->atk);
+    int morale ;
+    if (target->getName() == "Nami")
+    {
+        morale = 12;
+        context.morale -= morale;
+    }
+    else
+    {
+        morale = 8;
+        context.morale -= morale;
+    }
+    int new_speed = target->getspeed() - 6;
+    if (new_speed <0) new_speed=0;
+    target->setspeed(new_speed);
+    
+    target->receiveDamage(damage);
+    if (context.morale < 0)
+        context.morale = 0;
+    return damage;
 }
 
 void Kalifa::endTurn(BattleContext &context)
 {
     // TODO: implement
+    // no need to do
 }
 
 /*
