@@ -579,7 +579,7 @@ int Chopper::specialSkill(Character *target, BattleContext &context)
     thấp nhất sẽ do hàm phía sau chọn*/
     // CHÚ Ý CHOPPER
     int heal_hp = ceil(35 + 0.5 * this->atk);
-    target->receiveDamage(-heal_hp); //hoi mau
+    target->receiveDamage(-heal_hp); // hoi mau
     if (target->getName() == "Luffy")
     {
         context.morale += 5;
@@ -587,7 +587,7 @@ int Chopper::specialSkill(Character *target, BattleContext &context)
             context.morale = 100;
     }
     return 0;
-    // do không có sát thương 
+    // do không có sát thương
 }
 
 int Chopper::attack(Building *target, BattleContext &context)
@@ -601,7 +601,7 @@ int Chopper::attack(Building *target, BattleContext &context)
 void Chopper::endTurn(BattleContext &context)
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 /*
@@ -789,12 +789,12 @@ void Franky::endTurn(BattleContext &context)
     // TODO: implement
     if (check_over_70)
     {
-        this->def +=5;
-        check_over_70 = false ; //reset
+        this->def += 5;
+        check_over_70 = false; // reset
     }
-    if(check_under_30) 
+    if (check_under_30)
     {
-        this->atk = ceil(1.1 *this->atk);
+        this->atk = ceil(1.1 * this->atk);
         check_under_30 = false;
     }
 }
@@ -833,43 +833,45 @@ string CP9Agent::str() const
  */
 Lucci::Lucci(string name, int hp, int atk, int def,
              int speed, int energy, int doriki)
-    :CP9Agent(name,hp,atk,def,speed,energy,doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
-    //no need to do
+    // no need to do
 }
 
 int Lucci::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    int enemy_damage = ceil(this->atk + 0.05*this->doriki);
-    if(target->getHP()< 0.5 *target->getmaxHp())
+    int enemy_damage = ceil(this->atk + 0.05 * this->doriki);
+    if (target->getHP() < 0.5 * target->getmaxHp())
     {
-        enemy_damage = ceil(1.2*enemy_damage);
-    } 
+        enemy_damage = ceil(1.2 * enemy_damage);
+    }
     target->receiveDamage(enemy_damage);
-    //ko cong morale do ko thman quy tac
+    // ko cong morale do ko thman quy tac
     return enemy_damage;
 }
 
 int Lucci::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-   if (this->energy < 25) return 0;
+    if (this->energy < 25)
+        return 0;
     this->energy -= 25;
     // Bỏ qua 50% phòng thủ
     int enemy_damage = (int)ceil(2.8 * atk);
     int passed = (int)ceil(enemy_damage + 0.5 * target->getdef());
     target->receiveDamage(passed);
-    if (!target->isAlive()&&target->isStrawHat())
-        context.morale = context.morale-10;
-        return enemy_damage;
+    if (!target->isAlive() && target->isStrawHat())
+        context.morale = context.morale - 10;
+    return enemy_damage;
 }
 
 void Lucci::endTurn(BattleContext &context)
 {
     // TODO: implement
-    if(this->hp < 0.4*this->maxHp) this->atk =ceil(1.05*this->atk);
+    if (this->hp < 0.4 * this->maxHp)
+        this->atk = ceil(1.05 * this->atk);
 }
 
 /*
@@ -877,25 +879,74 @@ void Lucci::endTurn(BattleContext &context)
  */
 Kaku::Kaku(string name, int hp, int atk, int def,
            int speed, int energy, int doriki)
+    : CP9Agent(name, hp, atk, def, speed, energy, doriki)
 {
     // TODO: implement
+    // no need to do
 }
 
 int Kaku::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = ceil(this->atk);
+    target->receiveDamage(damage);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 int Kaku::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 20)
+        return 0;
+    this->energy -= 20;
+    int damage1 = ceil(1.2 * this->atk);
+    int total_damage = damage1;
+    target->receiveDamage(damage1);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+
+        return damage1;
+    }
+
+    int damage2 = ceil(this->atk);
+    target->receiveDamage(damage2);
+    total_damage += damage2;
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+
+        return total_damage;
+    }
+
+    int damage3 = ceil(0.8 * this->atk);
+
+    target->receiveDamage(damage3);
+    total_damage += damage3;
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+
+    return total_damage;
 }
 
 void Kaku::endTurn(BattleContext &context)
 {
     // TODO: implement
+    //no ned to do
 }
 
 /*
