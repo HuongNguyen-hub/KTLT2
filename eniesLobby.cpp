@@ -954,25 +954,43 @@ void Kaku::endTurn(BattleContext &context)
  */
 Jabra::Jabra(string name, int hp, int atk, int def,
              int speed, int energy, int doriki)
+    :CP9Agent(name,hp,atk,def,speed,energy,doriki)
+    
 {
     // TODO: implement
+    //no need to do
 }
 
 int Jabra::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = this->atk;
+    target->receiveDamage(damage);
+    return damage; //ko morale do co quy dinh o special
 }
 
 int Jabra::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
+    if(this->energy <18)
     return 0;
+    this->energy -=18;
+    int damage =ceil (1.5*this->atk);
+    if(this->hp < 0.3 *this->maxHp) damage = ceil(1.25*damage);
+    target->receiveDamage(damage);
+    if(!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -=5;
+        if(context.morale <0) context.morale =0;
+    }
+    return damage;
+
 }
 
 void Jabra::endTurn(BattleContext &context)
 {
     // TODO: implement
+    //no need to do
 }
 
 /*
