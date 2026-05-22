@@ -1192,36 +1192,56 @@ void Fukurou::endTurn(BattleContext &context)
 /*
  * Building
  */
+// do có cú pháp classname::classname(parameter) --> ko co kiểu trả về
 Building::Building(string name, int hp)
 {
     // TODO: implement
+    this->name = name;
+    this->hp = hp;
+    this->maxHP = hp;
+    if (hp > 0)
+        this->destroyed = false;
+    else
+        this->destroyed = true;
 }
 
 Building::~Building()
 {
     // TODO: implement if needed
+    // no need to do
 }
 
 void Building::receiveDamage(int damage)
 {
     // TODO: implement
+
+    this->hp -= damage;
+    if (hp <= 0)
+    {
+        this->hp = 0;
+        this->destroyed = true;
+    }
 }
 
 bool Building::isDestroyed() const
 {
     // TODO: implement
-    return destroyed;
+    return this->destroyed;
 }
 
 void Building::onDestroyed(BattleContext &context)
 {
     return;
+    // no need to do
 }
 
 string Building::str() const
 {
     // TODO: implement
-    return "";
+    stringstream ss;
+    ss << "Building [name=" << this->name << ", hp=" << this->hp 
+    << ", maxHP=" << this->maxHP << ", destroyed=" << this->destroyed << "]";
+    return ss.str();
 }
 
 // them method
@@ -1385,7 +1405,7 @@ void EniesLobbyBattle::assign_minHP_Murom(Character *character)
         return;
     // gan target cho doi thu bk ben team mu ron
     Character *target = nullptr;
-    //find ng con song dau tien gan cho target
+    // find ng con song dau tien gan cho target
     for (int i = 0; i < strawHatCount; i++)
     {
         if (strawHats[i]->isAlive())
@@ -1394,14 +1414,15 @@ void EniesLobbyBattle::assign_minHP_Murom(Character *character)
             break;
         }
     }
-    if (target == nullptr) return;
+    if (target == nullptr)
+        return;
 
     if (character->getName() == "Fukurou" && character->getEnergy() >= 14)
     {
         int lowestHp = findLowestHp();
         context.lowestStrawHatHP = lowestHp;
         // goi ham
-        character->specialSkill(target,context);
+        character->specialSkill(target, context);
     }
 }
 
