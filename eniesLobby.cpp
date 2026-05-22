@@ -1264,11 +1264,21 @@ MainGate::MainGate(string name, int hp) : Building(name, hp) {}
 void MainGate::applyEffect(BattleContext &context)
 {
     // TODO: implement
+    if(!this->isDestroyed())
+    context.rescueProgress = context.rescueProgress;
 }
 
 void MainGate::onDestroyed(BattleContext &context)
 {
     // TODO: implement
+    if(this->isDestroyed())
+    {
+        context.mainGateDestroyed = true;
+        context.rescueProgress +=20;
+        context.morale +=5;
+        if(context.morale >100) context.morale =100;
+        if(context.rescueProgress>100) context.rescueProgress =100;
+    }
 }
 
 /*

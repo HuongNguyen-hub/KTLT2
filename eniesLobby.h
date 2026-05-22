@@ -273,11 +273,11 @@ public:
 class BattleContext {
 public:
     int turnCount; //số lượt diện ra
-    int morale; //tinh thần phe mũ rơm
-    int alarmLevel; //mức báo động tại Enies Lobby
-    int rescueProgress; //tiến độ giải cứu Robin
-    int escapeProgress;//tiến độ rút lui khởi enies lobby
-    int busterCallTimer; //số lượt còn lại trước khi buster xảy ra
+    int morale; //tinh thần phe mũ rơm <100
+    int alarmLevel; //mức báo động tại Enies Lobby<100
+    int rescueProgress; //tiến độ giải cứu Robin<100
+    int escapeProgress;//tiến độ rút lui khởi enies lobby<100
+    int busterCallTimer; //số lượt còn lại trước khi buster xảy ra>9
     bool mainGateDestroyed;//cổng chính đã bị phá hay chưa , mặc định false
     bool robinRescued;//xác định robin đã đc cứu hay chưa , mặc định false
     bool bridgeOpened;//xác định cầu thoát hiểu được mở hay ch , md false
