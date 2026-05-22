@@ -283,6 +283,7 @@ public:
     bool bridgeOpened;//xác định cầu thoát hiểu được mở hay ch , md false
     bool battleEnded;//xác định trận đấu kt hay chưa , false
     string resultCode; //kết quả cuối cùng
+    int lowestStrawHatHP ;
 
 public:
     BattleContext();
@@ -382,6 +383,9 @@ private:
     TurnNode* turnOrder; //(LINKED LIST)danh sách liên kết đơn quản lí thứ tự hành động các nhân vật
     BattleContext context;//trạng thái hiện tại của trận đánh
     int maxTurns;//số lượt tối đa của trận đánh
+    
+    
+
 
 public:
     EniesLobbyBattle(const string& filename);
@@ -401,6 +405,14 @@ public:
     void checkEndCondition();
 
     string getResult() const;
+    //them ham
+    void assign_minHP_Murom (Character *StrawHat);
+    /*-----------------------------------------*/
+    /*tạo một hàm để kiểm tra xem ai mang số hp min ở team mũ rơm.
+    Tuy nhiên vấn đề là  mảng của tên nhân vật mũ rơm là character 
+    mảng 2 chiều , nên muốn truy xuất từng tên thì từng tên đó sẽ là con
+    trỏ 1 chiều . Nên là kết quả trả về sẽ là lượng máu hp min thôi*/
+    int findLowestHp();
 };
 
 #endif

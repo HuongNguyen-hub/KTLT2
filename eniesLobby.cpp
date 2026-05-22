@@ -732,16 +732,16 @@ int Franky::specialSkill(Character *target, BattleContext &context)
     else if (this->energy >= 20)
     {
         this->energy -= 20;
-        double temp = this->atk * 1.8;
+        double temp = ceil(this->atk * 1.8);
         int new_speed = (target->getspeed() - 8);
         if (new_speed < 0)
             new_speed = 0;
         target->setspeed(new_speed);
         if (target->getName() == "Lucci")
             temp = 1.2 * temp;
-        int enemy_damage = ceil(temp);
+        int enemy_damage = (int)ceil(temp);
         target->receiveDamage(enemy_damage);
-        if (this->hp < ceil(0.7 * maxHp))
+        if (this->hp < 0.7 * maxHp)
             check_over_70 = true;
         if (!target->isAlive() && target->isCP9())
         {
@@ -758,7 +758,7 @@ int Franky::attack(Building *target, BattleContext &context)
 {
     // TODO: implement
     double temp = this->atk + 0.3 * this->def;
-    int building_damage = ceil(temp);
+    int building_damage = (int)ceil(temp);
     target->receiveDamage(building_damage);
     return building_damage;
 }
@@ -770,14 +770,14 @@ int Franky::specialSkill(Building *target, BattleContext &context)
     {
 
         this->energy -= 30;
-        int enemy_damage = ceil(this->atk * 1.2);
+        int enemy_damage = (int)ceil(this->atk * 1.2);
         target->receiveDamage(INT_MAX);
         return INT_MAX; // DESTROYED
     }
     else if (this->energy >= 20)
     {
         this->energy -= 20;
-        double building_damage = ceil(this->atk * 1.8);
+        double building_damage = (int)ceil(this->atk * 1.8);
         target->receiveDamage(building_damage);
         return building_damage;
     }
@@ -845,7 +845,7 @@ int Lucci::attack(Character *target, BattleContext &context)
     int enemy_damage = ceil(this->atk + 0.05 * this->doriki);
     if (target->getHP() < 0.5 * target->getmaxHp())
     {
-        enemy_damage = ceil(1.2 * enemy_damage);
+        enemy_damage = (int)ceil(1.2 * enemy_damage);
     }
     target->receiveDamage(enemy_damage);
     // ko cong morale do ko thman quy tac
@@ -888,7 +888,7 @@ Kaku::Kaku(string name, int hp, int atk, int def,
 int Kaku::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    int damage = ceil(this->atk);
+    int damage = (int)ceil(this->atk);
     target->receiveDamage(damage);
     if (!target->isAlive() && target->isStrawHat())
     {
@@ -905,7 +905,7 @@ int Kaku::specialSkill(Character *target, BattleContext &context)
     if (this->energy < 20)
         return 0;
     this->energy -= 20;
-    int damage1 = ceil(1.2 * this->atk);
+    int damage1 = (int)ceil(1.2 * this->atk);
     int total_damage = damage1;
     target->receiveDamage(damage1);
     if (!target->isAlive() && target->isStrawHat())
@@ -917,7 +917,7 @@ int Kaku::specialSkill(Character *target, BattleContext &context)
         return damage1;
     }
 
-    int damage2 = ceil(this->atk);
+    int damage2 = (int)ceil(this->atk);
     target->receiveDamage(damage2);
     total_damage += damage2;
     if (!target->isAlive() && target->isStrawHat())
@@ -929,7 +929,7 @@ int Kaku::specialSkill(Character *target, BattleContext &context)
         return total_damage;
     }
 
-    int damage3 = ceil(0.8 * this->atk);
+    int damage3 = (int)ceil(0.8 * this->atk);
 
     target->receiveDamage(damage3);
     total_damage += damage3;
@@ -975,9 +975,9 @@ int Jabra::specialSkill(Character *target, BattleContext &context)
     if (this->energy < 18)
         return 0;
     this->energy -= 18;
-    int damage = ceil(1.5 * this->atk);
+    int damage = (int)ceil(1.5 * this->atk);
     if (this->hp < 0.3 * this->maxHp)
-        damage = ceil(1.25 * damage);
+        damage = (int)ceil(1.25 * damage);
     target->receiveDamage(damage);
     if (!target->isAlive() && target->isStrawHat())
     {
@@ -1024,7 +1024,7 @@ int Blueno::specialSkill(Character *target, BattleContext &context)
     if (this->energy < 15)
         return 0;
     this->energy -= 15;
-    int damage = ceil(1.3 * this->atk);
+    int damage = (int)ceil(1.3 * this->atk);
     // cap nhat hp
     if (this->hp > 0.5 * this->maxHp)
         damage += 20;
@@ -1070,8 +1070,8 @@ int Kalifa::specialSkill(Character *target, BattleContext &context)
     if (this->energy < 18)
         return 0;
     this->energy -= 18;
-    int damage = ceil(1.4 * this->atk);
-    int morale ;
+    int damage = (int)ceil(1.4 * this->atk);
+    int morale;
     if (target->getName() == "Nami")
     {
         morale = 12;
@@ -1083,9 +1083,10 @@ int Kalifa::specialSkill(Character *target, BattleContext &context)
         context.morale -= morale;
     }
     int new_speed = target->getspeed() - 6;
-    if (new_speed <0) new_speed=0;
+    if (new_speed < 0)
+        new_speed = 0;
     target->setspeed(new_speed);
-    
+
     target->receiveDamage(damage);
     if (context.morale < 0)
         context.morale = 0;
@@ -1111,13 +1112,33 @@ Kumadori::Kumadori(string name, int hp, int atk, int def,
 int Kumadori::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = this->atk;
+    target->receiveDamage(damage);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 int Kumadori::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 16)
+        return 0;
+    this->energy -= 16;
+    int damage = (int)ceil(30 + 0.1 * this->doriki);
+    if (this->hp < 0.4 * this->maxHp)
+        damage += 25;
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 5;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 void Kumadori::endTurn(BattleContext &context)
@@ -1138,13 +1159,29 @@ Fukurou::Fukurou(string name, int hp, int atk, int def,
 int Fukurou::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    int damage = this->atk;
+    target->receiveDamage(damage);
+    return damage;
 }
 
 int Fukurou::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    return 0;
+    if (this->energy < 14)
+        return 0;
+    this->energy -= 14;
+
+    int damage = ceil(1.3 * this->atk);
+    if (target->getHP() == context.lowestStrawHatHP)
+        damage += 20;
+    target->receiveDamage(damage);
+    if (!target->isAlive() && target->isStrawHat())
+    {
+        context.morale -= 6;
+        if (context.morale < 0)
+            context.morale = 0;
+    }
+    return damage;
 }
 
 void Fukurou::endTurn(BattleContext &context)
@@ -1327,3 +1364,46 @@ string EniesLobbyBattle::getResult() const
     // TODO: implement
     return "";
 }
+/*===================================*/
+// add method for enieslobby battle
+int EniesLobbyBattle::findLowestHp()
+{
+    int lowest = INT_MAX;
+    for (int i = 0; i < strawHatCount; i++)
+    {
+        if (strawHats[i]->isAlive() && strawHats[i]->getHP() < lowest)
+        {
+            lowest = strawHats[i]->getHP();
+        }
+    }
+    return lowest;
+}
+void EniesLobbyBattle::assign_minHP_Murom(Character *character)
+{
+    // tim mu rom con song
+    if (!character->isAlive())
+        return;
+    // gan target cho doi thu bk ben team mu ron
+    Character *target = nullptr;
+    //find ng con song dau tien gan cho target
+    for (int i = 0; i < strawHatCount; i++)
+    {
+        if (strawHats[i]->isAlive())
+        {
+            target = strawHats[i];
+            break;
+        }
+    }
+    if (target == nullptr) return;
+
+    if (character->getName() == "Fukurou" && character->getEnergy() >= 14)
+    {
+        int lowestHp = findLowestHp();
+        context.lowestStrawHatHP = lowestHp;
+        // goi ham
+        character->specialSkill(target,context);
+    }
+}
+
+// the aim for fukurou
+/*===================================*/
