@@ -1239,8 +1239,8 @@ string Building::str() const
 {
     // TODO: implement
     stringstream ss;
-    ss << "Building [name=" << this->name << ", hp=" << this->hp 
-    << ", maxHP=" << this->maxHP << ", destroyed=" << this->destroyed << "]";
+    ss << "Building [name=" << this->name << ", hp=" << this->hp
+       << ", maxHP=" << this->maxHP << ", destroyed=" << this->destroyed << "]";
     return ss.str();
 }
 
@@ -1264,20 +1264,22 @@ MainGate::MainGate(string name, int hp) : Building(name, hp) {}
 void MainGate::applyEffect(BattleContext &context)
 {
     // TODO: implement
-    if(!this->isDestroyed())
-    context.rescueProgress = context.rescueProgress;
+    if (!this->isDestroyed())
+        context.rescueProgress = context.rescueProgress;
 }
 
 void MainGate::onDestroyed(BattleContext &context)
 {
     // TODO: implement
-    if(this->isDestroyed())
+    if (this->isDestroyed())
     {
         context.mainGateDestroyed = true;
-        context.rescueProgress +=20;
-        context.morale +=5;
-        if(context.morale >100) context.morale =100;
-        if(context.rescueProgress>100) context.rescueProgress =100;
+        context.rescueProgress += 20;
+        context.morale += 5;
+        if (context.morale > 100)
+            context.morale = 100;
+        if (context.rescueProgress > 100)
+            context.rescueProgress = 100;
     }
 }
 
@@ -1289,11 +1291,23 @@ Courthouse::Courthouse(string name, int hp) : Building(name, hp) {}
 void Courthouse::applyEffect(BattleContext &context)
 {
     // TODO: implement
+    if (!this->isDestroyed())
+    {
+        context.alarmLevel += 5;
+        if (context.alarmLevel > 100)
+            context.alarmLevel = 100;
+    }
 }
 
 void Courthouse::onDestroyed(BattleContext &context)
 {
     // TODO: implement
+    if (this->isDestroyed())
+    {
+        context.alarmLevel -= 20;
+        if (context.alarmLevel < 0)
+            context.alarmLevel = 0;
+    }
 }
 
 /*
@@ -1304,6 +1318,19 @@ TowerOfJustice::TowerOfJustice(string name, int hp) : Building(name, hp) {}
 void TowerOfJustice::applyEffect(BattleContext &context)
 {
     // TODO: implement
+    if (context.mainGateDestroyed && (!context.robinRescued))
+    {
+        context.rescueProgress += 5;
+        if (context.rescueProgress >= 100)
+        {
+
+            context.robinRescued = true;
+            context.morale += 10;
+            context.rescueProgress = 100;
+            if (context.morale > 100)
+                context.morale = 100;
+        }
+    }
 }
 
 /*
@@ -1314,6 +1341,19 @@ BridgeOfHesitation::BridgeOfHesitation(string name, int hp) : Building(name, hp)
 void BridgeOfHesitation::applyEffect(BattleContext &context)
 {
     // TODO: implement
+    if(context.robinRescued)
+    {
+        context.bridgeOpened =true;
+        context.escapeProgress +=5;
+        if(context.escapeProgress >=100)
+        {
+            //end
+            context.battleEnded = true;
+            context.resultCode ="STRAW_HAT_WIN";
+            context.escapeProgress =100;
+        } 
+        
+    }
 }
 
 /*
@@ -1324,11 +1364,24 @@ BusterCallShip::BusterCallShip(string name, int hp) : Building(name, hp) {}
 void BusterCallShip::applyEffect(BattleContext &context)
 {
     // TODO: implement
+    if(!this->isDestroyed())
+    {
+        context.busterCallTimer -=1;
+        if(context.busterCallTimer <=0) 
+        {
+        context.battleEnded = true;
+        context.resultCode ="BUSTER_CAL";
+        context.busterCallTimer=0;
+        }
+    }
 }
 
 void BusterCallShip::onDestroyed(BattleContext &context)
 {
     // TODO: implement
+    if(this->isDestroyed())
+    context.busterCallTimer+=3;
+
 }
 
 /*
