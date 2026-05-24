@@ -407,6 +407,7 @@ public:
     string getResult() const;
     //them ham
     void assign_minHP_Murom (Character *StrawHat);
+    TurnNode *delete_all_node (TurnNode *head);
     /*-----------------------------------------*/
     /*tạo một hàm để kiểm tra xem ai mang số hp min ở team mũ rơm.
     Tuy nhiên vấn đề là  mảng của tên nhân vật mũ rơm là character 

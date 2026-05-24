@@ -1341,18 +1341,17 @@ BridgeOfHesitation::BridgeOfHesitation(string name, int hp) : Building(name, hp)
 void BridgeOfHesitation::applyEffect(BattleContext &context)
 {
     // TODO: implement
-    if(context.robinRescued)
+    if (context.robinRescued)
     {
-        context.bridgeOpened =true;
-        context.escapeProgress +=5;
-        if(context.escapeProgress >=100)
+        context.bridgeOpened = true;
+        context.escapeProgress += 5;
+        if (context.escapeProgress >= 100)
         {
-            //end
+            // end
             context.battleEnded = true;
-            context.resultCode ="STRAW_HAT_WIN";
-            context.escapeProgress =100;
-        } 
-        
+            context.resultCode = "STRAW_HAT_WIN";
+            context.escapeProgress = 100;
+        }
     }
 }
 
@@ -1364,14 +1363,14 @@ BusterCallShip::BusterCallShip(string name, int hp) : Building(name, hp) {}
 void BusterCallShip::applyEffect(BattleContext &context)
 {
     // TODO: implement
-    if(!this->isDestroyed())
+    if (!this->isDestroyed())
     {
-        context.busterCallTimer -=1;
-        if(context.busterCallTimer <=0) 
+        context.busterCallTimer -= 1;
+        if (context.busterCallTimer <= 0)
         {
-        context.battleEnded = true;
-        context.resultCode ="BUSTER_CAL";
-        context.busterCallTimer=0;
+            context.battleEnded = true;
+            context.resultCode = "BUSTER_CAL";
+            context.busterCallTimer = 0;
         }
     }
 }
@@ -1379,9 +1378,8 @@ void BusterCallShip::applyEffect(BattleContext &context)
 void BusterCallShip::onDestroyed(BattleContext &context)
 {
     // TODO: implement
-    if(this->isDestroyed())
-    context.busterCallTimer+=3;
-
+    if (this->isDestroyed())
+        context.busterCallTimer += 3;
 }
 
 /*
@@ -1390,11 +1388,36 @@ void BusterCallShip::onDestroyed(BattleContext &context)
 EniesLobbyBattle::EniesLobbyBattle(const string &filename)
 {
     // TODO: implement
+    // constructor
+    this->strawHats = nullptr;
+    this->strawHatCount = 0;
+    this->cp9Agents = nullptr;
+    this->cp9Count = 0;
+    this->buildings = nullptr;
+    this->buildingCount = 0;
+    this->turnOrder = nullptr;
+    this->maxTurns = 0;
+    loadFromFile(filename);
+    // bước này là bước khởi tạo các giá trị có thể khởi tạo để tránh giá trị rác
 }
 
 EniesLobbyBattle::~EniesLobbyBattle()
 {
     // TODO: implement
+    for (int i = 0; i < strawHatCount; i++)
+        delete[] strawHats[i];
+    delete[] strawHats;
+
+    for (int i = 0; i < cp9Count; i++)
+        delete[] cp9Agents[i];
+    delete[] cp9Agents;
+
+    for (int i = 0; i < buildingCount; i++)
+        delete[] buildings[i];
+    delete[] buildings;
+
+    //đối với danh sách liên kết , ta xóa lần lượt từ đầu cho đến cuối
+    turnOrder = delete_all_node (turnOrder);
 }
 
 void EniesLobbyBattle::loadFromFile(const string &filename)
@@ -1489,5 +1512,18 @@ void EniesLobbyBattle::assign_minHP_Murom(Character *character)
     }
 }
 
+TurnNode* EniesLobbyBattle ::delete_all_node (TurnNode *head)
+{
+    if (head == nullptr) return nullptr ;
+    TurnNode *cur = head ;
+    TurnNode *del = nullptr;
+    while (cur != nullptr)
+    {
+        del = cur;
+        cur = cur->next;
+        delete del;
+    }
+    return nullptr;
+}
 // the aim for fukurou
 /*===================================*/
