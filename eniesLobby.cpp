@@ -1416,8 +1416,8 @@ EniesLobbyBattle::~EniesLobbyBattle()
         delete[] buildings[i];
     delete[] buildings;
 
-    //đối với danh sách liên kết , ta xóa lần lượt từ đầu cho đến cuối
-    turnOrder = delete_all_node (turnOrder);
+    // đối với danh sách liên kết , ta xóa lần lượt từ đầu cho đến cuối
+    turnOrder = delete_all_node(turnOrder);
 }
 
 void EniesLobbyBattle::loadFromFile(const string &filename)
@@ -1428,16 +1428,50 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
 void EniesLobbyBattle::addStrawHat(Character *character)
 {
     // TODO: implement
+    // xin cpd mang strahats moiw
+    Character **newStrawHats = new Character *[strawHatCount + 1];
+    // đã new thì phải cập nhật lại các th.viên cũ
+    for (int i = 0; i < strawHatCount; i++)
+    {
+        newStrawHats[i] = strawHats[i];
+    }
+    newStrawHats[strawHatCount] = character;
+    // gp mang cu
+    delete[] strawHats;
+    strawHats = newStrawHats;
+    strawHatCount++;
 }
 
 void EniesLobbyBattle::addCP9Agent(Character *character)
 {
     // TODO: implement
+    Character **newCP9 = new Character *[cp9Count + 1];
+    // đã new thì phải cập nhật lại các th.viên cũ
+    for (int i = 0; i < cp9Count; i++)
+    {
+        newCP9[i] = cp9Agents[i];
+    }
+    newCP9[cp9Count] = character;
+    // gp mang cu
+    delete[] cp9Agents;
+    cp9Agents = newCP9;
+    cp9Count++;
 }
 
 void EniesLobbyBattle::addBuilding(Building *building)
 {
     // TODO: implement
+    Building**newBuilding = new Building*[buildingCount+1];
+    //đã new thì phải cập nhật lại các th.viên cũ
+    for(int i=0;i<buildingCount;i++)
+    {
+        newBuilding[i] = buildings[i];
+    }
+    newBuilding[buildingCount] = building ;
+    //gp mang cu
+    delete [] buildings;
+    buildings = newBuilding;
+    buildingCount++;
 }
 
 void EniesLobbyBattle::buildTurnOrder()
@@ -1512,10 +1546,11 @@ void EniesLobbyBattle::assign_minHP_Murom(Character *character)
     }
 }
 
-TurnNode* EniesLobbyBattle ::delete_all_node (TurnNode *head)
+TurnNode *EniesLobbyBattle ::delete_all_node(TurnNode *head)
 {
-    if (head == nullptr) return nullptr ;
-    TurnNode *cur = head ;
+    if (head == nullptr)
+        return nullptr;
+    TurnNode *cur = head;
     TurnNode *del = nullptr;
     while (cur != nullptr)
     {
