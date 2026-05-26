@@ -1482,30 +1482,37 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             if (name == "Luffy")
             {
                 straw = new Luffy(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Zoro")
             {
                 straw = new Zoro(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Sanji")
             {
                 straw = new Sanji(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Nami")
             {
                 straw = new Nami(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Chopper")
             {
                 straw = new Chopper(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Usopp")
             {
                 straw = new Usopp(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
             else if (name == "Franky")
             {
                 straw = new Franky(name, hp, atk, def, speed, energy, bounty);
+                addStrawHat(straw);
             }
 
             if (straw != nullptr)
@@ -1526,30 +1533,37 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             if (name == "Lucci")
             {
                 agent = new Lucci(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Kaku")
             {
                 agent = new Kaku(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Jabra")
             {
                 agent = new Jabra(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Blueno")
             {
                 agent = new Blueno(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Kalifa")
             {
                 agent = new Kalifa(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Kumadori")
             {
                 agent = new Kumadori(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
             else if (name == "Fukurou")
             {
                 agent = new Fukurou(name, hp, atk, def, speed, energy, doriki);
+                addCP9Agent(agent);
             }
 
             if (agent != nullptr)
@@ -1569,22 +1583,27 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             if (name == "MainGate")
             {
                 building = new MainGate(name, hp);
+                addBuilding(building);
             }
             else if (name == "Courthouse")
             {
                 building = new Courthouse(name, hp);
+                addBuilding(building);
             }
             else if (name == "TowerOfJustice")
             {
                 building = new TowerOfJustice(name, hp);
+                addBuilding(building);
             }
             else if (name == "BridgeOfHesitation")
             {
                 building = new BridgeOfHesitation(name, hp);
+                addBuilding(building);
             }
             else if (name == "BusterCallShip")
             {
                 building = new BusterCallShip(name, hp);
+                addBuilding(building);
             }
 
             if (building != nullptr)
@@ -1593,8 +1612,8 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             }
         }
     }
-    myfile.close (); //dong file 
-    //gọi phương thức turnOrder
+    myfile.close(); // dong file
+    // gọi phương thức turnOrder
     buildTurnOrder();
 }
 
