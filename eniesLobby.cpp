@@ -1669,45 +1669,44 @@ void EniesLobbyBattle::addBuilding(Building *building)
 void EniesLobbyBattle::buildTurnOrder()
 {
     // TODO: implement
-    //thêm một nút vào đầu tiên
-    //tạo ra 1 con trỏ mới kiểu turnOrder
-    TurnNode *head = new TurnNode ;
-    TurnNode *cur = head ;
-    //ko có ghi là TurnNode *cur= new TurnNode ;
-    // cur= head ; là sai do cur được cp 1 địa chỉ -->gán vậy thì bộ nhớ bị rò rỉ
-    //nói chung nếu cpd thì phải sd vùng nhớ đó chứ ko nên trỏ đi đâu tránh rò rỉ
-    //gan head cho nv dau tien
+    // thêm một nút vào đầu tiên
+    // tạo ra 1 con trỏ mới kiểu turnOrder
+    TurnNode *head = new TurnNode;
+    TurnNode *cur = head;
+    // ko có ghi là TurnNode *cur= new TurnNode ;
+    //  cur= head ; là sai do cur được cp 1 địa chỉ -->gán vậy thì bộ nhớ bị rò rỉ
+    // nói chung nếu cpd thì phải sd vùng nhớ đó chứ ko nên trỏ đi đâu tránh rò rỉ
+    // gan head cho nv dau tien
     head->data = strawHats[0];
-    head->next = nullptr ;
-    
-    //add tất cả các nút tiếp theo vào
-    //do head->next la nullptr nen ta lan luot add vao
-    //Mũ rơm
-    for(int i=1; i<strawHatCount ;i++)
+    head->next = nullptr;
+
+    // add tất cả các nút tiếp theo vào
+    // do head->next la nullptr nen ta lan luot add vao
+    // Mũ rơm
+    for (int i = 1; i < strawHatCount; i++)
     {
         TurnNode *newNode = new TurnNode;
-        cur->next = newNode ;
+        cur->next = newNode;
         newNode->data = strawHats[i];
-        newNode->next = nullptr ;
-        
-        cur = newNode ; //ko ro ri do ko cpd
+        newNode->next = nullptr;
+
+        cur = newNode; // ko ro ri do ko cpd
     }
-    //CP9
-    for (int i=0;i<cp9Count;i++)
+    // CP9
+    for (int i = 0; i < cp9Count; i++)
     {
-        TurnNode *new_Node = new TurnNode ;
-        cur->next = new_Node ;
+        TurnNode *new_Node = new TurnNode;
+        cur->next = new_Node;
         new_Node->data = cp9Agents[i];
-        new_Node->next = nullptr ;
-        cur = new_Node ;
+        new_Node->next = nullptr;
+        cur = new_Node;
     }
-
-
 }
 
 void EniesLobbyBattle::runBattle()
 {
     // TODO: implement
+
 }
 
 void EniesLobbyBattle::processTurn(Character *character)
@@ -1728,7 +1727,11 @@ void EniesLobbyBattle::checkEndCondition()
 string EniesLobbyBattle::getResult() const
 {
     // TODO: implement
-    return "";
+    stringstream ss ;
+    ss <<context.resultCode<<" "<<context.turnCount<<" "<<context.morale 
+    <<" "<<context.alarmLevel<<" "<<context.rescueProgress<<" "<<context.escapeProgress
+    <<" "<<context.busterCallTimer;
+    return ss.str();
 }
 /*===================================*/
 // add method for enieslobby battle
