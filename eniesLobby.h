@@ -414,6 +414,7 @@ public:
     mảng 2 chiều , nên muốn truy xuất từng tên thì từng tên đó sẽ là con
     trỏ 1 chiều . Nên là kết quả trả về sẽ là lượng máu hp min thôi*/
     int findLowestHp();
+    
 };
 
 #endif
