@@ -1423,6 +1423,179 @@ EniesLobbyBattle::~EniesLobbyBattle()
 void EniesLobbyBattle::loadFromFile(const string &filename)
 {
     // TODO: implement
+    ifstream myfile(filename);
+    if (!myfile.is_open())
+        return;
+    string line;
+    while (getline(myfile, line)) // doc cho den khi het
+    {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        // tao ra dong ao
+        string type;
+        ss >> type;
+        if (type == "CONTEXT")
+        {
+            int morale;          // tinh thần phe mũ rơm <100
+            int alarmLevel;      // mức báo động tại Enies Lobby<100
+            int rescueProgress;  // tiến độ giải cứu Robin<100
+            int escapeProgress;  // tiến độ rút lui khởi enies lobby<100
+            int busterCallTimer; // số lượt còn lại trước khi buster xảy ra>9
+            int maxT;            // số lượt tối đa của trận đánh
+            ss >> morale >> alarmLevel >> rescueProgress >> escapeProgress >> busterCallTimer >> maxT;
+            context.morale = morale;
+            context.alarmLevel = alarmLevel;
+            context.rescueProgress = rescueProgress;
+            context.escapeProgress = escapeProgress;
+            context.busterCallTimer = busterCallTimer;
+            maxTurns = maxT;
+            // limit
+            if (context.morale < 0)
+                context.morale = 0;
+            if (context.morale > 100)
+                context.morale = 100;
+            if (context.alarmLevel < 0)
+                context.alarmLevel = 0;
+            if (context.alarmLevel > 100)
+                context.alarmLevel = 100;
+            if (context.rescueProgress < 0)
+                context.rescueProgress = 0;
+            if (context.rescueProgress > 100)
+                context.rescueProgress = 100;
+            if (context.escapeProgress < 0)
+                context.escapeProgress = 0;
+            if (context.escapeProgress > 100)
+                context.escapeProgress = 100;
+            if (context.busterCallTimer < 0)
+                context.busterCallTimer = 0;
+        }
+        else if (type == "STRAW_HAT")
+        {
+            string name;
+            int hp, atk, def, speed, energy;
+            long long bounty;
+
+            ss >> name >> hp >> atk >> def >> speed >> energy >> bounty;
+            Character *straw = nullptr;
+
+            if (name == "Luffy")
+            {
+                straw = new Luffy(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Zoro")
+            {
+                straw = new Zoro(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Sanji")
+            {
+                straw = new Sanji(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Nami")
+            {
+                straw = new Nami(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Chopper")
+            {
+                straw = new Chopper(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Usopp")
+            {
+                straw = new Usopp(name, hp, atk, def, speed, energy, bounty);
+            }
+            else if (name == "Franky")
+            {
+                straw = new Franky(name, hp, atk, def, speed, energy, bounty);
+            }
+
+            if (straw != nullptr)
+            {
+                addStrawHat(straw); // add thêm nhân vật mới
+            }
+        }
+
+        else if (type == "CP9")
+        {
+            string name;
+            int hp, atk, def, speed, energy, doriki;
+
+            ss >> name >> hp >> atk >> def >> speed >> energy >> doriki;
+
+            Character *agent = nullptr;
+
+            if (name == "Lucci")
+            {
+                agent = new Lucci(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Kaku")
+            {
+                agent = new Kaku(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Jabra")
+            {
+                agent = new Jabra(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Blueno")
+            {
+                agent = new Blueno(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Kalifa")
+            {
+                agent = new Kalifa(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Kumadori")
+            {
+                agent = new Kumadori(name, hp, atk, def, speed, energy, doriki);
+            }
+            else if (name == "Fukurou")
+            {
+                agent = new Fukurou(name, hp, atk, def, speed, energy, doriki);
+            }
+
+            if (agent != nullptr)
+            {
+                addCP9Agent(agent);
+            }
+        }
+        else if (type == "BUILDING")
+        {
+            string name;
+            int hp;
+
+            ss >> name >> hp;
+
+            Building *building = nullptr;
+
+            if (name == "MainGate")
+            {
+                building = new MainGate(name, hp);
+            }
+            else if (name == "Courthouse")
+            {
+                building = new Courthouse(name, hp);
+            }
+            else if (name == "TowerOfJustice")
+            {
+                building = new TowerOfJustice(name, hp);
+            }
+            else if (name == "BridgeOfHesitation")
+            {
+                building = new BridgeOfHesitation(name, hp);
+            }
+            else if (name == "BusterCallShip")
+            {
+                building = new BusterCallShip(name, hp);
+            }
+
+            if (building != nullptr)
+            {
+                addBuilding(building);
+            }
+        }
+    }
+    myfile.close (); //dong file 
+    //gọi phương thức turnOrder
+    buildTurnOrder();
 }
 
 void EniesLobbyBattle::addStrawHat(Character *character)
@@ -1461,15 +1634,15 @@ void EniesLobbyBattle::addCP9Agent(Character *character)
 void EniesLobbyBattle::addBuilding(Building *building)
 {
     // TODO: implement
-    Building**newBuilding = new Building*[buildingCount+1];
-    //đã new thì phải cập nhật lại các th.viên cũ
-    for(int i=0;i<buildingCount;i++)
+    Building **newBuilding = new Building *[buildingCount + 1];
+    // đã new thì phải cập nhật lại các th.viên cũ
+    for (int i = 0; i < buildingCount; i++)
     {
         newBuilding[i] = buildings[i];
     }
-    newBuilding[buildingCount] = building ;
-    //gp mang cu
-    delete [] buildings;
+    newBuilding[buildingCount] = building;
+    // gp mang cu
+    delete[] buildings;
     buildings = newBuilding;
     buildingCount++;
 }
