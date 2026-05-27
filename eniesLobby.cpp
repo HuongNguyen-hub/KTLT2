@@ -1877,7 +1877,14 @@ void EniesLobbyBattle::processTurn(Character *character)
     //CP9 ---------------------------------------------------------
     else if(character->isCP9())
     {
-        
+        for(int i=0 ;i<strawHatCount;i++)
+        {
+            if(strawHats[i]->isAlive()) 
+            {char_target = strawHats[i];
+                break;
+            }
+        }
+
     }
 
 }
