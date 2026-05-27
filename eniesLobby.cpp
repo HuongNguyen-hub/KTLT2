@@ -1757,19 +1757,15 @@ void EniesLobbyBattle::processTurn(Character *character)
         return;
     Character *char_target = nullptr;
     Building *build_target = nullptr;
-    Building *temp_maingate = nullptr;
-
-    Building *temp_court = nullptr;
-    Building *temp_bus = nullptr;
-    Building *temp_bridge = nullptr;
-    int minHp = INT_MAX;
-    Character *lowestHp_inStraw = nullptr;
 
     if (character->isStrawHat())
     {
         if (character->getName() == "Chopper" && character->getEnergy() >= 15)
         {
             // tìm minHp
+            int minHp = INT_MAX;
+
+            Character *lowestHp_inStraw = nullptr;
             for (int i = 0; i < strawHatCount; i++)
             {
                 if (strawHats[i] != nullptr && strawHats[i]->isAlive())
@@ -1789,6 +1785,10 @@ void EniesLobbyBattle::processTurn(Character *character)
             }
         }
         // nếu ko phải chopper thì xét tiếp đến các ưu tiên khác
+        Building *temp_maingate = nullptr;
+        Building *temp_court = nullptr;
+        Building *temp_bus = nullptr;
+        Building *temp_bridge = nullptr;
         bool maingate_destroyed = true;
         bool courthouse_destroyed = true;
         bool buster_ship_destroyed = true;
