@@ -1760,6 +1760,8 @@ void EniesLobbyBattle::processTurn(Character *character)
     Building *temp_court = nullptr;
     Building *temp_bus = nullptr;
     Building *temp_bridge = nullptr;
+    int minHp = INT_MAX;
+    Character *lowestHp_inStraw = nullptr;
 
     if (character->isStrawHat())
     {
@@ -1823,11 +1825,44 @@ void EniesLobbyBattle::processTurn(Character *character)
                 }
                 else if (context.robinRescued)
                 {
-                    build_target = temp_bridge;
+                    if (!bridge_destroyed && temp_bridge != nullptr)
+                        build_target = temp_bridge;
+                    else if (bridge_destroyed || temp_bridge == nullptr)
+                    {
+                        for (int i = 0; i < cp9Count; i++)
+                        {
+                            if (cp9Agents[i]->isAlive())
+                            {
+                                char_target = cp9Agents[i];
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 // do đây là lớp kế thừa nên ko thấy destroyed
             }
+        }
+        // ktra xem nhân vật hiện tại phải là chopper không
+        if (character->getName() == "Chopper" && character->getEnergy() >= 15)
+        {
+            // tìm minHp
+            for (int i = 0; i < strawHatCount; i++)
+            {
+                if (strawHats[i] != nullptr && strawHats[i]->isAlive())
+                {
+                    if (strawHats[i]->getHP() < minHp)
+                    {
+                        minHp = strawHats[i]->getHP();
+                        lowestHp_inStraw = strawHats[i];
+                    }
+                }
+            }
+        if (lowestHp_inStraw != nullptr)
+        {
+            character->specialSkill(lowestHp_inStraw,context);
+            character->endTurn(context);
+        }
         }
     }
 }
