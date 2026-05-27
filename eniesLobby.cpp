@@ -1757,6 +1757,8 @@ void EniesLobbyBattle::processTurn(Character *character)
         return;
     Character *char_target = nullptr;
     Building *build_target = nullptr;
+    Building *temp_maingate = nullptr;
+
     Building *temp_court = nullptr;
     Building *temp_bus = nullptr;
     Building *temp_bridge = nullptr;
@@ -1765,85 +1767,6 @@ void EniesLobbyBattle::processTurn(Character *character)
 
     if (character->isStrawHat())
     {
-        bool courthouse_destroyed;
-        bool buster_ship_destroyed;
-        bool bridge_destroyed;
-        for (int i = 0; i < buildingCount; i++)
-        {
-            if (buildings[i]->getname() == "CourtHouse")
-            {
-                if (buildings[i]->isDestroyed())
-                    courthouse_destroyed = true;
-                else
-                    courthouse_destroyed = false;
-                temp_court = buildings[i];
-                break;
-            }
-
-            if (buildings[i]->getname() == "BusterCallShip")
-            {
-                if (buildings[i]->isDestroyed())
-                    buster_ship_destroyed = true;
-                else
-                    buster_ship_destroyed = false;
-                temp_bus = buildings[i];
-                break;
-            }
-
-            if (buildings[i]->getname() == "BridgeOfHesitation")
-            {
-                if (buildings[i]->isDestroyed())
-                    bridge_destroyed = true;
-                else
-                    bridge_destroyed = false;
-                temp_bridge = buildings[i];
-                break;
-            }
-
-            if (buildings[i]->getname() == "MainGate")
-            {
-                if (buildings[i]->isDestroyed())
-                    build_target = buildings[i];
-                else if (!buildings[i]->isDestroyed() && context.alarmLevel >= 50 && !courthouse_destroyed)
-                {
-                    build_target = temp_court;
-                }
-                else if (context.busterCallTimer <= 5 && !buster_ship_destroyed)
-                {
-                    build_target = temp_bus;
-                }
-                else if (!context.robinRescued)
-                {
-                    for (int i = 0; i < cp9Count; i++)
-                    {
-                        if (cp9Agents[i]->isAlive())
-                        {
-                            char_target = cp9Agents[i];
-                            break;
-                        }
-                    }
-                }
-                else if (context.robinRescued)
-                {
-                    if (!bridge_destroyed && temp_bridge != nullptr)
-                        build_target = temp_bridge;
-                    else if (bridge_destroyed || temp_bridge == nullptr)
-                    {
-                        for (int i = 0; i < cp9Count; i++)
-                        {
-                            if (cp9Agents[i]->isAlive())
-                            {
-                                char_target = cp9Agents[i];
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // do đây là lớp kế thừa nên ko thấy destroyed
-            }
-        }
-        // ktra xem nhân vật hiện tại phải là chopper không
         if (character->getName() == "Chopper" && character->getEnergy() >= 15)
         {
             // tìm minHp
@@ -1858,12 +1781,102 @@ void EniesLobbyBattle::processTurn(Character *character)
                     }
                 }
             }
-        if (lowestHp_inStraw != nullptr)
+            if (lowestHp_inStraw != nullptr)
+            {
+                character->specialSkill(lowestHp_inStraw, context);
+                character->endTurn(context);
+                return; // thoát ko xét các mục tiêu khác do ưu tiên sô 1
+            }
+        }
+        // nếu ko phải chopper thì xét tiếp đến các ưu tiên khác
+        bool maingate_destroyed = true;
+        bool courthouse_destroyed = true;
+        bool buster_ship_destroyed = true;
+        bool bridge_destroyed = true;
+        // lấy thông tin building
+        for (int i = 0; i < buildingCount; i++)
         {
-            character->specialSkill(lowestHp_inStraw,context);
-            character->endTurn(context);
+            if (buildings[i]->getname() == "Courthouse")
+            {
+                if (buildings[i]->isDestroyed())
+                    courthouse_destroyed = true;
+                else
+                    courthouse_destroyed = false;
+                temp_court = buildings[i];
+            }
+
+            if (buildings[i]->getname() == "BusterCallShip")
+            {
+                if (buildings[i]->isDestroyed())
+                    buster_ship_destroyed = true;
+                else
+                    buster_ship_destroyed = false;
+                temp_bus = buildings[i];
+            }
+
+            if (buildings[i]->getname() == "BridgeOfHesitation")
+            {
+                if (buildings[i]->isDestroyed())
+                    bridge_destroyed = true;
+                else
+                    bridge_destroyed = false;
+                temp_bridge = buildings[i];
+            }
+
+            if (buildings[i]->getname() == "MainGate")
+            {
+                if (buildings[i]->isDestroyed())
+                    maingate_destroyed = true;
+                else
+                    maingate_destroyed = false;
+                temp_maingate = buildings[i];
+            }
         }
+
+        // Quy tắc chọn mục tiêu
+        if (!maingate_destroyed)
+        {
+            build_target = temp_maingate;
         }
+        else if (maingate_destroyed && context.alarmLevel >= 50 && !courthouse_destroyed)
+        {
+            build_target = temp_court;
+        }
+        else if (context.busterCallTimer <= 5 && !buster_ship_destroyed)
+        {
+            build_target = temp_bus;
+        }
+        else if (!context.robinRescued)
+        {
+            for (int i = 0; i < cp9Count; i++)
+            {
+                if (cp9Agents[i]->isAlive())
+                {
+                    char_target = cp9Agents[i];
+                    break;
+                }
+            }
+        }
+        else if (context.robinRescued)
+        {
+            if (!bridge_destroyed && temp_bridge != nullptr)
+                build_target = temp_bridge;
+            else if (bridge_destroyed || temp_bridge == nullptr)
+            {
+                for (int i = 0; i < cp9Count; i++)
+                {
+                    if (cp9Agents[i]->isAlive())
+                    {
+                        char_target = cp9Agents[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // do đây là lớp kế thừa nên ko thấy destroyed
+
+        // ktra xem nhân vật hiện tại phải là chopper không
     }
 }
 
