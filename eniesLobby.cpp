@@ -1705,8 +1705,41 @@ void EniesLobbyBattle::buildTurnOrder()
 
 void EniesLobbyBattle::runBattle()
 {
-    // TODO: implement
+//TO DO 
+    while (!context.battleEnded && context.turnCount < maxTurns)
+    {
+        if(turnOrder == nullptr) break;
 
+        TurnNode *cur = turnOrder;
+        TurnNode *head = turnOrder;
+        Character *curChar = cur->data;
+        if (curChar != nullptr && curChar->isAlive() )
+        {
+            processTurn(curChar);
+        }
+        // timf pt cuoi
+        while (true)
+        {
+            if (cur->next == nullptr)
+            {
+                break;
+            }
+            cur = cur->next; //cap nhat cur
+        }
+        //chuyển head
+        turnOrder = turnOrder->next;
+        // gan tail vao
+        cur->next = head;
+        head->next = nullptr;
+        processBuildings();
+        context.turnCount += 1;
+        checkEndCondition();
+        if (context.turnCount == maxTurns && !context.battleEnded)
+        {
+            context.battleEnded = true;
+            context.resultCode = "TIME_OUT";
+        }
+    }
 }
 
 void EniesLobbyBattle::processTurn(Character *character)
@@ -1722,15 +1755,30 @@ void EniesLobbyBattle::processBuildings()
 void EniesLobbyBattle::checkEndCondition()
 {
     // TODO: implement
+    if (context.rescueProgress == true && context.escapeProgress >= 100)
+    {
+        context.resultCode = "STRAW_HAT_WIN";
+        return;
+    }
+    else if (context.busterCallTimer <= 0)
+    {
+        context.resultCode = "BUSTER_CALL";
+        return;
+    }
+    else if (context.turnCount >= maxTurns)
+    {
+        context.resultCode = "TIME_OUT";
+        return;
+    }
 }
 
 string EniesLobbyBattle::getResult() const
 {
     // TODO: implement
-    stringstream ss ;
-    ss <<context.resultCode<<" "<<context.turnCount<<" "<<context.morale 
-    <<" "<<context.alarmLevel<<" "<<context.rescueProgress<<" "<<context.escapeProgress
-    <<" "<<context.busterCallTimer;
+    stringstream ss;
+    ss << context.resultCode << " " << context.turnCount << " " << context.morale
+       << " " << context.alarmLevel << " " << context.rescueProgress << " " << context.escapeProgress
+       << " " << context.busterCallTimer;
     return ss.str();
 }
 /*===================================*/
