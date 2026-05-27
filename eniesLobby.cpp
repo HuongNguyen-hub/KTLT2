@@ -1873,11 +1873,13 @@ void EniesLobbyBattle::processTurn(Character *character)
                 }
             }
         }
-
-        // do đây là lớp kế thừa nên ko thấy destroyed
-
-        // ktra xem nhân vật hiện tại phải là chopper không
     }
+    //CP9 ---------------------------------------------------------
+    else if(character->isCP9())
+    {
+        
+    }
+
 }
 
 void EniesLobbyBattle::processBuildings()
