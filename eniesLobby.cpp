@@ -1254,7 +1254,14 @@ int Building::getmaxHP() const
 {
     return maxHP; // do ben toi da
 }
-
+string Building::getname() const
+{
+    return name;
+}
+bool Building::isDestroyed() const
+{
+    return destroyed;
+}
 //
 /*
  * MainGate
@@ -1705,15 +1712,16 @@ void EniesLobbyBattle::buildTurnOrder()
 
 void EniesLobbyBattle::runBattle()
 {
-//TO DO 
+    // TO DO
     while (!context.battleEnded && context.turnCount < maxTurns)
     {
-        if(turnOrder == nullptr) break;
+        if (turnOrder == nullptr)
+            break;
 
         TurnNode *cur = turnOrder;
         TurnNode *head = turnOrder;
         Character *curChar = cur->data;
-        if (curChar != nullptr && curChar->isAlive() )
+        if (curChar != nullptr && curChar->isAlive())
         {
             processTurn(curChar);
         }
@@ -1724,9 +1732,9 @@ void EniesLobbyBattle::runBattle()
             {
                 break;
             }
-            cur = cur->next; //cap nhat cur
+            cur = cur->next; // cap nhat cur
         }
-        //chuyển head
+        // chuyển head
         turnOrder = turnOrder->next;
         // gan tail vao
         cur->next = head;
@@ -1745,6 +1753,83 @@ void EniesLobbyBattle::runBattle()
 void EniesLobbyBattle::processTurn(Character *character)
 {
     // TODO: implement
+    if (character == nullptr || !character->isAlive())
+        return;
+    Character *char_target = nullptr;
+    Building *build_target = nullptr;
+    Building *temp_court = nullptr;
+    Building *temp_bus = nullptr;
+    Building *temp_bridge = nullptr;
+
+    if (character->isStrawHat())
+    {
+        bool courthouse_destroyed;
+        bool buster_ship_destroyed;
+        bool bridge_destroyed;
+        for (int i = 0; i < buildingCount; i++)
+        {
+            if (buildings[i]->getname() == "CourtHouse")
+            {
+                if (buildings[i]->isDestroyed())
+                    courthouse_destroyed = true;
+                else
+                    courthouse_destroyed = false;
+                temp_court = buildings[i];
+                break;
+            }
+
+            if (buildings[i]->getname() == "BusterCallShip")
+            {
+                if (buildings[i]->isDestroyed())
+                    buster_ship_destroyed = true;
+                else
+                    buster_ship_destroyed = false;
+                temp_bus = buildings[i];
+                break;
+            }
+
+            if (buildings[i]->getname() == "BridgeOfHesitation")
+            {
+                if (buildings[i]->isDestroyed())
+                    bridge_destroyed = true;
+                else
+                    bridge_destroyed = false;
+                temp_bridge = buildings[i];
+                break;
+            }
+
+            if (buildings[i]->getname() == "MainGate")
+            {
+                if (buildings[i]->isDestroyed())
+                    build_target = buildings[i];
+                else if (!buildings[i]->isDestroyed() && context.alarmLevel >= 50 && !courthouse_destroyed)
+                {
+                    build_target = temp_court;
+                }
+                else if (context.busterCallTimer <= 5 && !buster_ship_destroyed)
+                {
+                    build_target = temp_bus;
+                }
+                else if (!context.robinRescued)
+                {
+                    for (int i = 0; i < cp9Count; i++)
+                    {
+                        if (cp9Agents[i]->isAlive())
+                        {
+                            char_target = cp9Agents[i];
+                            break;
+                        }
+                    }
+                }
+                else if (context.robinRescued)
+                {
+                    build_target = temp_bridge;
+                }
+
+                // do đây là lớp kế thừa nên ko thấy destroyed
+            }
+        }
+    }
 }
 
 void EniesLobbyBattle::processBuildings()

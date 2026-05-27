@@ -305,7 +305,6 @@ public:
     virtual ~Building();
     int gethp()const;
     int getmaxHP()const;
-   
 
     void receiveDamage(int damage);
     bool isDestroyed() const;
@@ -314,6 +313,9 @@ public:
     virtual void onDestroyed(BattleContext& context);
 
     virtual string str () const;
+    //them method
+    string getname() const;
+    bool isDestroyed () const;
 };
 
 /*
@@ -414,7 +416,7 @@ public:
     mảng 2 chiều , nên muốn truy xuất từng tên thì từng tên đó sẽ là con
     trỏ 1 chiều . Nên là kết quả trả về sẽ là lượng máu hp min thôi*/
     int findLowestHp();
-    
+
 };
 
 #endif
