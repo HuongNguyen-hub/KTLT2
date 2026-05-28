@@ -259,6 +259,11 @@ int Luffy::attack(Building *target, BattleContext &context)
     int damage_building = ceil(temp_damage);
     // cap nhat damage thuc te
     target->receiveDamage(damage_building);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
+
     return damage_building;
     // do đây là tấn công công trình nên ko có mục tiêu ->bỏ qua
     // nv hạ gục mục tiêu
@@ -278,6 +283,11 @@ int Luffy::specialSkill(Building *target, BattleContext &context)
     context.alarmLevel += 10;
     int hp_loss = (int)ceil(0.08 * maxHp);
     this->receiveDamage(hp_loss);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
+
     return buiding_damage;
 }
 
@@ -347,6 +357,10 @@ int Zoro::attack(Building *target, BattleContext &context)
         building_damage = (int)ceil(1.15 * building_damage);
     // cap nhat lai hp doi thu sau moi phuong thuc
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -362,6 +376,10 @@ int Zoro::specialSkill(Building *target, BattleContext &context)
     // lam tron den kq cuoi cung
     int building_damage = ceil(building_damage_temp);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -442,6 +460,10 @@ int Sanji::attack(Building *target, BattleContext &context)
 
     int building_damage = ceil(building_temp);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -453,6 +475,10 @@ int Sanji::specialSkill(Building *target, BattleContext &context)
     this->energy -= 18;
     int building_damage = ceil(2.1 * this->atk);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -523,6 +549,10 @@ int Nami::attack(Building *target, BattleContext &context)
     // TODO: implement
     int building_damage = ceil(0.5 * this->atk);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -539,6 +569,10 @@ int Nami::specialSkill(Building *target, BattleContext &context)
     context.alarmLevel -= 5;
     if (context.alarmLevel < 0)
         context.alarmLevel = 0;
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return buidling_damage;
 }
 
@@ -602,6 +636,10 @@ int Chopper::attack(Building *target, BattleContext &context)
     // TODO: implement
     int building_damage = this->atk;
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -660,6 +698,10 @@ int Usopp::attack(Building *target, BattleContext &context)
     // TODO: implement
     int building_damage = ceil(0.5 * this->atk);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -674,6 +716,10 @@ int Usopp::specialSkill(Building *target, BattleContext &context)
     context.escapeProgress += 8;
     if (context.escapeProgress > 100)
         context.escapeProgress = 100;
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -768,6 +814,10 @@ int Franky::attack(Building *target, BattleContext &context)
     double temp = this->atk + 0.3 * this->def;
     int building_damage = (int)ceil(temp);
     target->receiveDamage(building_damage);
+    if (target->isDestroyed())
+    {
+        target->onDestroyed(context);
+    }
     return building_damage;
 }
 
@@ -787,6 +837,10 @@ int Franky::specialSkill(Building *target, BattleContext &context)
         this->energy -= 20;
         double building_damage = (int)ceil(this->atk * 1.8);
         target->receiveDamage(building_damage);
+        if (target->isDestroyed())
+        {
+            target->onDestroyed(context);
+        }
         return building_damage;
     }
     return 0;
@@ -1150,7 +1204,6 @@ int Kumadori::attack(Character *target, BattleContext &context)
     // TODO: implement
     int raw_damage = atk;
 
-    // ✅ Cần gây sát thương
     target->receiveDamage(raw_damage);
 
     int actual_damage = raw_damage - target->getdef();
@@ -1180,7 +1233,6 @@ int Kumadori::specialSkill(Character *target, BattleContext &context)
     if (hp < 0.4 * maxHp)
         raw_damage += 25;
 
-    // ✅ GÂY SÁT THƯƠNG LÊN TARGET
     target->receiveDamage(raw_damage);
 
     // Tính actual damage
@@ -1297,8 +1349,8 @@ string Building::str() const
 {
     // TODO: implement
     stringstream ss;
-    ss << "Building [name=" << this->name << ", hp=" << this->hp
-       << ", maxHP=" << this->maxHP << ", destroyed=" << this->destroyed << "]";
+    ss << "Building[name=" << this->name << ", hp=" << this->hp
+       << ", maxHP=" << this->maxHP << ", destroyed=" << (this->destroyed ? "true" : "false") << "]";
     return ss.str();
 }
 
@@ -1333,7 +1385,7 @@ void MainGate::applyEffect(BattleContext &context)
 void MainGate::onDestroyed(BattleContext &context)
 {
     // TODO: implement
-    if (this->isDestroyed())
+    if (this->isDestroyed() && !context.mainGateDestroyed)
     {
         context.mainGateDestroyed = true;
         context.rescueProgress += 20;
@@ -1592,7 +1644,6 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             else if (name == "Fukurou")
                 agent = new Fukurou(name, hp, atk, def, speed, energy, doriki);
 
-            // ✅ CHỈ GỌI 1 LẦN
             if (agent != nullptr)
             {
                 addCP9Agent(agent);
@@ -1954,7 +2005,8 @@ void EniesLobbyBattle::processTurn(Character *character)
         if (character->getEnergy() >= character->getSpecialSkillCost())
         {
             character->specialSkill(build_target, context);
-            build_target->onDestroyed(context);
+            if (build_target->isDestroyed())
+                build_target->onDestroyed(context);
         }
         else
         {
