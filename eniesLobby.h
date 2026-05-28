@@ -339,7 +339,7 @@ public:
     virtual string str () const;
     //them method
     string getname() const;
-    bool isDestroyed () const;
+
 };
 
 /*

@@ -1258,10 +1258,7 @@ string Building::getname() const
 {
     return name;
 }
-bool Building::isDestroyed() const
-{
-    return destroyed;
-}
+
 //
 /*
  * MainGate
@@ -1376,7 +1373,7 @@ void BusterCallShip::applyEffect(BattleContext &context)
         if (context.busterCallTimer <= 0)
         {
             context.battleEnded = true;
-            context.resultCode = "BUSTER_CAL";
+            context.resultCode = "BUSTER_CALL";
             context.busterCallTimer = 0;
         }
     }
@@ -1412,15 +1409,25 @@ EniesLobbyBattle::~EniesLobbyBattle()
 {
     // TODO: implement
     for (int i = 0; i < strawHatCount; i++)
-        delete[] strawHats[i];
+    {
+        delete strawHats[i];
+        strawHats[i] = nullptr;
+    }
     delete[] strawHats;
+    strawHats = nullptr;
 
     for (int i = 0; i < cp9Count; i++)
-        delete[] cp9Agents[i];
+    {
+        delete cp9Agents[i];
+        cp9Agents[i] = nullptr;
+    }
     delete[] cp9Agents;
 
     for (int i = 0; i < buildingCount; i++)
-        delete[] buildings[i];
+    {
+        delete buildings[i];
+        buildings[i] = nullptr;
+    }
     delete[] buildings;
 
     // đối với danh sách liên kết , ta xóa lần lượt từ đầu cho đến cuối
