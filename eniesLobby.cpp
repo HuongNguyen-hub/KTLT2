@@ -1928,18 +1928,52 @@ void EniesLobbyBattle::processBuildings()
 void EniesLobbyBattle::checkEndCondition()
 {
     // TODO: implement
-    if (context.rescueProgress == true && context.escapeProgress >= 100)
+    if (context.robinRescued == true && context.escapeProgress >= 100)
     {
+        context.battleEnded = true;
         context.resultCode = "STRAW_HAT_WIN";
         return;
     }
     else if (context.busterCallTimer <= 0)
     {
+        context.battleEnded = true;
         context.resultCode = "BUSTER_CALL";
         return;
     }
+    // Nếu mũ rơm bị hạ gục toàn bộ
+    bool cp9_win = true;
+    for (int i = 0; i < strawHatCount; i++)
+    {
+        if (strawHats[i]->isAlive())
+        {
+            cp9_win = false;
+        }
+    }
+    if (cp9_win)
+    {
+        context.battleEnded = true;
+        context.resultCode = "CP9_WIN";
+        return;
+    }
+    // Nếu CP9 bị hạ gục toàn bộ
+    bool str_win = true;
+    for (int i = 0; i < cp9Count; i++)
+    {
+        if (cp9Agents[i]->isAlive())
+        {
+            str_win = false;
+        }
+    }
+    if (str_win)
+    {
+        context.battleEnded = true;
+        context.resultCode = "STRAW_HAT_WIN_BY_DEFEAT_CP9";
+        return;
+    }
+    //----------------------
     else if (context.turnCount >= maxTurns)
     {
+        context.battleEnded = true;
         context.resultCode = "TIME_OUT";
         return;
     }
