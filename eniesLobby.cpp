@@ -204,46 +204,45 @@ Luffy::Luffy(string name, int hp, int atk, int def,
 int Luffy::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    double damage_temp;
+    int damage_temp;
     if (hp > 0.5 * maxHp)
         damage_temp = atk;
     else if (hp > 0.3 * maxHp)
-        damage_temp = 1.15 * atk;
+        damage_temp = ceil( 1.15 * atk);
     else if (hp >= 0 && hp < 0.3 * maxHp)
-        damage_temp = 1.3 * atk;
+        damage_temp = ceil( 1.3 * atk);
     // lm tron len
-    int damage = ceil(damage_temp);
+    int damage = damage_temp;
     // dua vao ham recieve damage ktra xem con song khong
     target->receiveDamage(damage); // goi ham de tinh alive
     if (!target->isAlive() && target->isCP9())
         context.morale += 5; // public
-
-    return damage; // trả về lượng sát thương thực tế được tạo ra
+return damage-target->getdef();
+     // trả về lượng sát thương thực tế được tạo ra
 }
 
 int Luffy::specialSkill(Character *target, BattleContext &context)
 {
     // TODO: implement
-    if (energy < 20 || hp < (int)ceil(0.15 * maxHp))
+    if (energy < 20 || hp < 0.15 * maxHp)
         return 0;
 
     this->energy -= 20; // ton 20 nang luong cho gear second
     // do luffy sd kĩ năng gear second nên đã gây sát thương cho đối thủ
-    int enemy_damage = (int)ceil(2.0 * atk);
+    int enemy_damage = ceil(2.0 * atk);
     target->receiveDamage(enemy_damage); // cap nhat mau doi thu
     this->atk += 15;
     this->speed += 15; // speed of luffy
     context.alarmLevel += 10;
     // cap nhat hp thuc te of luffy
-    int luffy_damage = (int)ceil(0.08 * maxHp); // luong giam la luong sat thuong
+    int luffy_damage = ceil(0.08 * maxHp); // luong giam la luong sat thuong
     this->receiveDamage(luffy_damage);
     if (!target->isAlive() && target->isCP9())
     {
-        context.morale += 5;
         ktra_xem_luffy_co_ha_guc_ai_khong = 1;
     }
     // luffy còn sống chưa chắc mục tiêu bị hạ gục -->ktra target
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Luffy::attack(Building *target, BattleContext &context)
