@@ -1495,6 +1495,7 @@ EniesLobbyBattle::~EniesLobbyBattle()
 void EniesLobbyBattle::loadFromFile(const string &filename)
 {
     // TODO: implement
+    // TODO: implement
     ifstream myfile(filename);
     if (!myfile.is_open())
         return;
@@ -1504,17 +1505,12 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
         if (line.empty())
             continue;
         stringstream ss(line);
-        // tao ra dong ao
         string type;
         ss >> type;
+
         if (type == "CONTEXT")
         {
-            int morale;          // tinh thần phe mũ rơm <100
-            int alarmLevel;      // mức báo động tại Enies Lobby<100
-            int rescueProgress;  // tiến độ giải cứu Robin<100
-            int escapeProgress;  // tiến độ rút lui khởi enies lobby<100
-            int busterCallTimer; // số lượt còn lại trước khi buster xảy ra>9
-            int maxT;            // số lượt tối đa của trận đánh
+            int morale, alarmLevel, rescueProgress, escapeProgress, busterCallTimer, maxT;
             ss >> morale >> alarmLevel >> rescueProgress >> escapeProgress >> busterCallTimer >> maxT;
             context.morale = morale;
             context.alarmLevel = alarmLevel;
@@ -1522,6 +1518,7 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             context.escapeProgress = escapeProgress;
             context.busterCallTimer = busterCallTimer;
             maxTurns = maxT;
+
             // limit
             if (context.morale < 0)
                 context.morale = 0;
@@ -1547,97 +1544,55 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
             string name;
             int hp, atk, def, speed, energy;
             long long bounty;
-
             ss >> name >> hp >> atk >> def >> speed >> energy >> bounty;
+
             Character *straw = nullptr;
 
             if (name == "Luffy")
-            {
                 straw = new Luffy(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Zoro")
-            {
                 straw = new Zoro(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Sanji")
-            {
                 straw = new Sanji(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Nami")
-            {
                 straw = new Nami(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Chopper")
-            {
                 straw = new Chopper(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Usopp")
-            {
                 straw = new Usopp(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
             else if (name == "Franky")
-            {
                 straw = new Franky(name, hp, atk, def, speed, energy, bounty);
-                addStrawHat(straw);
-            }
 
+            // ✅ CHỈ GỌI 1 LẦN (BỎ dòng addStrawHat ở trên)
             if (straw != nullptr)
             {
-                addStrawHat(straw); // add thêm nhân vật mới
+                addStrawHat(straw);
             }
         }
-
         else if (type == "CP9")
         {
             string name;
             int hp, atk, def, speed, energy, doriki;
-
             ss >> name >> hp >> atk >> def >> speed >> energy >> doriki;
 
             Character *agent = nullptr;
 
             if (name == "Lucci")
-            {
                 agent = new Lucci(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Kaku")
-            {
                 agent = new Kaku(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Jabra")
-            {
                 agent = new Jabra(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Blueno")
-            {
                 agent = new Blueno(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Kalifa")
-            {
                 agent = new Kalifa(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Kumadori")
-            {
                 agent = new Kumadori(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
             else if (name == "Fukurou")
-            {
                 agent = new Fukurou(name, hp, atk, def, speed, energy, doriki);
-                addCP9Agent(agent);
-            }
 
+            // ✅ CHỈ GỌI 1 LẦN
             if (agent != nullptr)
             {
                 addCP9Agent(agent);
@@ -1647,45 +1602,29 @@ void EniesLobbyBattle::loadFromFile(const string &filename)
         {
             string name;
             int hp;
-
             ss >> name >> hp;
 
             Building *building = nullptr;
 
             if (name == "MainGate")
-            {
                 building = new MainGate(name, hp);
-                addBuilding(building);
-            }
             else if (name == "Courthouse")
-            {
                 building = new Courthouse(name, hp);
-                addBuilding(building);
-            }
             else if (name == "TowerOfJustice")
-            {
                 building = new TowerOfJustice(name, hp);
-                addBuilding(building);
-            }
             else if (name == "BridgeOfHesitation")
-            {
                 building = new BridgeOfHesitation(name, hp);
-                addBuilding(building);
-            }
             else if (name == "BusterCallShip")
-            {
                 building = new BusterCallShip(name, hp);
-                addBuilding(building);
-            }
 
+            // ✅ CHỈ GỌI 1 LẦN
             if (building != nullptr)
             {
                 addBuilding(building);
             }
         }
     }
-    myfile.close(); // dong file
-    // gọi phương thức turnOrder
+    myfile.close();
     buildTurnOrder();
 }
 
@@ -1740,39 +1679,88 @@ void EniesLobbyBattle::addBuilding(Building *building)
 
 void EniesLobbyBattle::buildTurnOrder()
 {
-    // TODO: implement
-    // thêm một nút vào đầu tiên
-    // tạo ra 1 con trỏ mới kiểu turnOrder
-    TurnNode *head = new TurnNode;
-    TurnNode *cur = head;
-    // ko có ghi là TurnNode *cur= new TurnNode ;
-    //  cur= head ; là sai do cur được cp 1 địa chỉ -->gán vậy thì bộ nhớ bị rò rỉ
-    // nói chung nếu cpd thì phải sd vùng nhớ đó chứ ko nên trỏ đi đâu tránh rò rỉ
-    // gan head cho nv dau tien
-    head->data = strawHats[0];
-    head->next = nullptr;
+    // // TODO: implement
+    // // thêm một nút vào đầu tiên
+    // // tạo ra 1 con trỏ mới kiểu turnOrder
+    // TurnNode *head = new TurnNode;
+    // TurnNode *cur = head;
+    // // ko có ghi là TurnNode *cur= new TurnNode ;
+    // //  cur= head ; là sai do cur được cp 1 địa chỉ -->gán vậy thì bộ nhớ bị rò rỉ
+    // // nói chung nếu cpd thì phải sd vùng nhớ đó chứ ko nên trỏ đi đâu tránh rò rỉ
+    // // gan head cho nv dau tien
+    // head->data = strawHats[0];
+    // head->next = nullptr;
 
-    // add tất cả các nút tiếp theo vào
-    // do head->next la nullptr nen ta lan luot add vao
-    // Mũ rơm
-    for (int i = 1; i < strawHatCount; i++)
+    // // add tất cả các nút tiếp theo vào
+    // // do head->next la nullptr nen ta lan luot add vao
+    // // Mũ rơm
+    // for (int i = 1; i < strawHatCount; i++)
+    // {
+    //     TurnNode *newNode = new TurnNode;
+    //     cur->next = newNode;
+    //     newNode->data = strawHats[i];
+    //     newNode->next = nullptr;
+
+    //     cur = newNode; // ko ro ri do ko cpd
+    // }
+    // // CP9
+    // for (int i = 0; i < cp9Count; i++)
+    // {
+    //     TurnNode *new_Node = new TurnNode;
+    //     cur->next = new_Node;
+    //     new_Node->data = cp9Agents[i];
+    //     new_Node->next = nullptr;
+    //     cur = new_Node;
+    // }
+    // 1. Khởi tạo con trỏ tạm để xây dựng danh sách
+    TurnNode *head = nullptr;
+    TurnNode *cur = nullptr;
+
+    // 2. Thêm tất cả nhân vật Băng Mũ Rơm vào trước
+    for (int i = 0; i < strawHatCount; i++)
     {
+        if (strawHats[i] == nullptr)
+            continue; // Bỏ qua nếu con trỏ rỗng
+
         TurnNode *newNode = new TurnNode;
-        cur->next = newNode;
         newNode->data = strawHats[i];
         newNode->next = nullptr;
 
-        cur = newNode; // ko ro ri do ko cpd
+        if (head == nullptr) // Nếu là nút đầu tiên
+        {
+            head = newNode;
+            cur = head;
+        }
+        else // Nếu đã có nút đầu, nối vào đuôi
+        {
+            cur->next = newNode;
+            cur = newNode;
+        }
     }
-    // CP9
+
+    // 3. Thêm tiếp tất cả đặc vụ CP9 vào sau
     for (int i = 0; i < cp9Count; i++)
     {
-        TurnNode *new_Node = new TurnNode;
-        cur->next = new_Node;
-        new_Node->data = cp9Agents[i];
-        new_Node->next = nullptr;
-        cur = new_Node;
+        if (cp9Agents[i] == nullptr)
+            continue;
+
+        TurnNode *newNode = new TurnNode;
+        newNode->data = cp9Agents[i];
+        newNode->next = nullptr;
+
+        if (head == nullptr) // Trường hợp không có Mũ Rơm nào, CP9 sẽ là đầu
+        {
+            head = newNode;
+            cur = head;
+        }
+        else
+        {
+            cur->next = newNode;
+            cur = newNode;
+        }
     }
+
+    this->turnOrder = head;
 }
 
 void EniesLobbyBattle::runBattle()
@@ -1851,10 +1839,10 @@ void EniesLobbyBattle::processTurn(Character *character)
         Building *temp_court = nullptr;
         Building *temp_bus = nullptr;
         Building *temp_bridge = nullptr;
-        bool maingate_destroyed = true;
-        bool courthouse_destroyed = true;
-        bool buster_ship_destroyed = true;
-        bool bridge_destroyed = true;
+        bool maingate_destroyed = false;
+        bool courthouse_destroyed = false;
+        bool buster_ship_destroyed = false;
+        bool bridge_destroyed = false;
         // lấy thông tin building
         for (int i = 0; i < buildingCount; i++)
         {
@@ -1966,6 +1954,7 @@ void EniesLobbyBattle::processTurn(Character *character)
         if (character->getEnergy() >= character->getSpecialSkillCost())
         {
             character->specialSkill(build_target, context);
+            build_target->onDestroyed(context);
         }
         else
         {
@@ -2005,7 +1994,7 @@ void EniesLobbyBattle::checkEndCondition()
     // Nếu mũ rơm bị hạ gục toàn bộ
     bool cp9_win = true;
     for (int i = 0; i < strawHatCount; i++)
-    { 
+    {
         if (strawHats[i]->isAlive())
         {
             cp9_win = false;
