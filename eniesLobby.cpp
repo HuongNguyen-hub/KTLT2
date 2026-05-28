@@ -187,7 +187,7 @@ string StrawHat::str() const
     stringstream ss;
     ss << "StrawHat[name=" << this->name << ", hp=" << this->hp
        << ", atk=" << atk << ", def=" << def << ", speed=" << speed
-       << ", energy= " << energy << ", bounty=" << bounty << "]";
+       << ", energy=" << energy << ", bounty=" << bounty << "]";
     return ss.str(); // chuyen ve chuoi
 }
 
