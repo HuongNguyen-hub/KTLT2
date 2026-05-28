@@ -1918,6 +1918,11 @@ void EniesLobbyBattle::processTurn(Character *character)
 void EniesLobbyBattle::processBuildings()
 {
     // TODO: implement
+    for (int i = 0; i < buildingCount; i++)
+    {
+        if (buildings[i] != nullptr && !buildings[i]->isDestroyed())
+            buildings[i]->applyEffect(context);
+    }
 }
 
 void EniesLobbyBattle::checkEndCondition()
