@@ -691,10 +691,10 @@ Franky::Franky(string name, int hp, int atk, int def,
 int Franky::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    double temp = this->atk + 0.3 * this->def;
+    int temp = ceil( this->atk + 0.3 * this->def);
     if (target->isCP9())
-        temp = 1.1 * temp;
-    int enemy_damage = ceil(temp);
+        temp = ceil(1.1 * temp);
+    int enemy_damage = temp;
     target->receiveDamage(enemy_damage);
     if (target->isCP9() && !target->isAlive())
     {
@@ -725,7 +725,7 @@ int Franky::specialSkill(Character *target, BattleContext &context)
             if (context.morale > 100)
                 context.morale = 100;
         }
-        if (this->hp < ceil(0.7 * maxHp))
+        if (this->hp < 0.7 * maxHp)
             check_over_70 = true;
         return enemy_damage;
     }
