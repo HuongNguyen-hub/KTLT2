@@ -1874,19 +1874,45 @@ void EniesLobbyBattle::processTurn(Character *character)
             }
         }
     }
-    //CP9 ---------------------------------------------------------
-    else if(character->isCP9())
+    // CP9 ---------------------------------------------------------
+    else if (character->isCP9())
     {
-        for(int i=0 ;i<strawHatCount;i++)
+        for (int i = 0; i < strawHatCount; i++)
         {
-            if(strawHats[i]->isAlive()) 
-            {char_target = strawHats[i];
+            if (strawHats[i]->isAlive())
+            {
+                char_target = strawHats[i];
                 break;
             }
         }
-
     }
-
+    // Nếu mục tiêu là nhân vật -------------------------------
+    // ktra xem còn đủ năng lựng ko
+    if (char_target != nullptr)
+    {
+        if (character->getEnergy() >= character->getSpecialSkillCost())
+        {
+            character->specialSkill(char_target, context);
+        }
+        else
+        {
+            character->attack(char_target, context);
+        }
+    }
+    if (build_target != nullptr)
+    {
+        if (character->getEnergy() >= character->getSpecialSkillCost())
+        {
+            character->specialSkill(build_target, context);
+        }
+        else
+        {
+            character->attack(build_target, context);
+            if (build_target->isDestroyed())
+                build_target->onDestroyed(context);
+        }
+    }
+    character->endTurn(context);
 }
 
 void EniesLobbyBattle::processBuildings()

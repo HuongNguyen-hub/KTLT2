@@ -52,6 +52,7 @@ public:
     virtual bool isCP9() const;
 
     virtual string str() const = 0;
+    virtual int getSpecialSkillCost() const = 0;
 };
 
 /*
@@ -86,6 +87,7 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 20; }
 };
 
 class Zoro : public StrawHat {
@@ -101,6 +103,7 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const  {return 15;}
 };
 
 class Sanji : public StrawHat {
@@ -116,6 +119,7 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const  {return 18;}
 };
 
 class Nami : public StrawHat {
@@ -131,6 +135,7 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const  {return 20;}
 };
 
 class Chopper : public StrawHat {
@@ -144,6 +149,7 @@ public:
     int attack(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 15; }
 };
 
 class Usopp : public StrawHat {
@@ -158,6 +164,8 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 16; }
+
 };
 
 class Franky : public StrawHat {
@@ -176,7 +184,9 @@ public:
     int specialSkill(Building* target, BattleContext& context);
 
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 20; }  
 };
+
 
 /*
  * CP9Agent
@@ -205,6 +215,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 25; }
+
 };
 
 class Kaku : public CP9Agent {
@@ -215,6 +227,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 20; }
+
 };
 
 class Jabra : public CP9Agent {
@@ -225,6 +239,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 18; }
+
 };
 
 class Blueno : public CP9Agent {
@@ -235,6 +251,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 15; }
+
 };
 
 class Kalifa : public CP9Agent {
@@ -245,6 +263,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 18; }
+
 };
 
 class Kumadori : public CP9Agent {
@@ -255,6 +275,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 16; }
+
 };
 
 class Fukurou : public CP9Agent {
@@ -265,6 +287,8 @@ public:
     int attack(Character* target, BattleContext& context);
     int specialSkill(Character* target, BattleContext& context);
     void endTurn(BattleContext& context);
+    int getSpecialSkillCost() const { return 14; }
+
 };
 
 /*
