@@ -823,8 +823,8 @@ bool CP9Agent::isCP9() const
 string CP9Agent::str() const
 {
     stringstream ss;
-    ss << "CP9 [ name =" << name << " , hp =" << hp << ", atk =" << atk << " , def ="
-       << def << ", speed =" << speed << ", energy =" << energy << ", doriki =" << doriki << "]";
+    ss << "CP9[name=" << name << ", hp=" << hp << ", atk=" << atk << ", def="
+       << def << ", speed=" << speed << ", energy=" << energy << ", doriki=" << doriki << "]";
     return ss.str();
 }
 
