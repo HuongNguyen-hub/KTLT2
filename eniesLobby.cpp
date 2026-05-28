@@ -236,6 +236,7 @@ int Luffy::specialSkill(Character *target, BattleContext &context)
     context.alarmLevel += 10;
     // cap nhat hp thuc te of luffy
     int luffy_damage = ceil(0.08 * maxHp); // luong giam la luong sat thuong
+    hp -= luffy_damage;
     this->receiveDamage(luffy_damage);
     if (!target->isAlive() && target->isCP9())
     {
@@ -314,7 +315,7 @@ int Zoro::attack(Character *target, BattleContext &context)
     {
         context.morale += 5;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Zoro::specialSkill(Character *target, BattleContext &context)
@@ -335,7 +336,7 @@ int Zoro::specialSkill(Character *target, BattleContext &context)
         context.morale += 4;
         ktra_xem_zoro_ha_guc = true;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Zoro::attack(Building *target, BattleContext &context)
@@ -396,7 +397,7 @@ int Sanji::attack(Character *target, BattleContext &context)
     target->receiveDamage(enemy_damage);
     if (!target->isAlive() && target->isCP9())
         context.morale += 5;
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Sanji::specialSkill(Character *target, BattleContext &context)
@@ -424,7 +425,7 @@ int Sanji::specialSkill(Character *target, BattleContext &context)
         context.morale += 5;
         sanji_co_ha_duoc_dt = true;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Sanji::attack(Building *target, BattleContext &context)
@@ -473,16 +474,16 @@ Nami::Nami(string name, int hp, int atk, int def,
 int Nami::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    double enemy_damage_temp = this->atk + 0.3 * target->getdef();
-    int enemy_damage = ceil(enemy_damage_temp);
-    target->receiveDamage(enemy_damage); // cap nhat hp , isAlive
+    double enemy_damage_temp = this->atk - ceil(0.7  * target->getdef());
+    int enemy_damage = ceil(this->atk);
+    target->receiveDamage(enemy_damage + 0.3*target->getdef()); // cap nhat hp , isAlive
     if (!target->isAlive() && target->isCP9())
     {
         context.morale += 5;
         this->nami_co_win = true;
     }
 
-    return enemy_damage;
+    return this->atk - ceil(0.7  * target->getdef());
 }
 
 int Nami::specialSkill(Character *target, BattleContext &context)
@@ -507,7 +508,7 @@ int Nami::specialSkill(Character *target, BattleContext &context)
         context.morale += 5;
         this->nami_co_win = true;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Nami::attack(Building *target, BattleContext &context)
@@ -566,7 +567,7 @@ int Chopper::attack(Character *target, BattleContext &context)
     {
         context.morale += 5;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 int Chopper::specialSkill(Character *target, BattleContext &context)
 {
@@ -629,7 +630,7 @@ int Usopp::attack(Character *target, BattleContext &context)
         if (context.morale > 100)
             context.morale = 100;
     }
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Usopp::specialSkill(Character *target, BattleContext &context)
@@ -644,7 +645,7 @@ int Usopp::specialSkill(Character *target, BattleContext &context)
     context.escapeProgress += 8;
     if (context.escapeProgress > 100)
         context.escapeProgress = 100;
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Usopp::attack(Building *target, BattleContext &context)
@@ -705,7 +706,7 @@ int Franky::attack(Character *target, BattleContext &context)
         check_over_70 = true;
     if (this->hp < 0.3 * maxHp)
         check_under_30 = true;
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Franky::specialSkill(Character *target, BattleContext &context)
@@ -726,7 +727,7 @@ int Franky::specialSkill(Character *target, BattleContext &context)
         }
         if (this->hp < 0.7 * maxHp)
             check_over_70 = true;
-        return enemy_damage;
+        return enemy_damage-target->getdef();
     }
     else if (this->energy >= 20)
     {
@@ -748,7 +749,7 @@ int Franky::specialSkill(Character *target, BattleContext &context)
             if (context.morale > 100)
                 context.morale = 100;
         }
-        return enemy_damage;
+        return enemy_damage-target->getdef();
     }
     return 0;
 }
@@ -848,7 +849,7 @@ int Lucci::attack(Character *target, BattleContext &context)
     }
     target->receiveDamage(enemy_damage);
     // ko cong morale do ko thman quy tac
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 int Lucci::specialSkill(Character *target, BattleContext &context)
@@ -863,7 +864,7 @@ int Lucci::specialSkill(Character *target, BattleContext &context)
     target->receiveDamage(passed);
     if (!target->isAlive() && target->isStrawHat())
         context.morale = context.morale - 10;
-    return enemy_damage;
+    return enemy_damage-target->getdef();
 }
 
 void Lucci::endTurn(BattleContext &context)
@@ -887,59 +888,78 @@ Kaku::Kaku(string name, int hp, int atk, int def,
 int Kaku::attack(Character *target, BattleContext &context)
 {
     // TODO: implement
-    int damage = (int)ceil(this->atk);
-    target->receiveDamage(damage);
+    int raw_damage = ceil(atk);
+    int actual_damage = raw_damage - target->getdef();
+    if (actual_damage < 0) actual_damage = 0;
+    
+    target->receiveDamage(raw_damage);
+    
     if (!target->isAlive() && target->isStrawHat())
     {
         context.morale -= 5;
-        if (context.morale < 0)
-            context.morale = 0;
+        if (context.morale < 0) context.morale = 0;
     }
-    return damage;
+    
+    return actual_damage;
 }
 
 int Kaku::specialSkill(Character *target, BattleContext &context)
 {
-    // TODO: implement
-    if (this->energy < 20)
-        return 0;
-    this->energy -= 20;
-    int damage1 = (int)ceil(1.2 * this->atk);
-    int total_damage = damage1;
-    target->receiveDamage(damage1);
+        if (energy < 20) return 0;
+    
+    energy -= 20;
+    
+    int target_def = target->getdef();
+    int total_actual_damage = 0;
+    
+    // Đòn 1: 120% atk
+    int raw1 = ceil(1.2 * atk);
+    int actual1 = raw1 - target_def;
+    if (actual1 < 0) actual1 = 0;
+    target->receiveDamage(raw1);
+    total_actual_damage += actual1;
+    
+    if (!target->isAlive()) 
+    {
+        if (target->isStrawHat())
+        {
+            context.morale -= 5;
+            if (context.morale < 0) context.morale = 0;
+        }
+        return total_actual_damage;
+    }
+    
+    // Đòn 2: 100% atk
+    int raw2 = ceil(atk);
+    int actual2 = raw2 - target_def;
+    if (actual2 < 0) actual2 = 0;
+    target->receiveDamage(raw2);
+    total_actual_damage += actual2;
+    
+    if (!target->isAlive())
+    {
+        if (target->isStrawHat())
+        {
+            context.morale -= 5;
+            if (context.morale < 0) context.morale = 0;
+        }
+        return total_actual_damage;
+    }
+    
+    // Đòn 3: 80% atk
+    int raw3 = ceil(0.8 * atk);
+    int actual3 = raw3 - target_def;
+    if (actual3 < 0) actual3 = 0;
+    target->receiveDamage(raw3);
+    total_actual_damage += actual3;
+    
     if (!target->isAlive() && target->isStrawHat())
     {
         context.morale -= 5;
-        if (context.morale < 0)
-            context.morale = 0;
-
-        return damage1;
+        if (context.morale < 0) context.morale = 0;
     }
-
-    int damage2 = (int)ceil(this->atk);
-    target->receiveDamage(damage2);
-    total_damage += damage2;
-    if (!target->isAlive() && target->isStrawHat())
-    {
-        context.morale -= 5;
-        if (context.morale < 0)
-            context.morale = 0;
-
-        return total_damage;
-    }
-
-    int damage3 = (int)ceil(0.8 * this->atk);
-
-    target->receiveDamage(damage3);
-    total_damage += damage3;
-    if (!target->isAlive() && target->isStrawHat())
-    {
-        context.morale -= 5;
-        if (context.morale < 0)
-            context.morale = 0;
-    }
-
-    return total_damage;
+    
+    return total_actual_damage;  // Trả về 69
 }
 
 void Kaku::endTurn(BattleContext &context)
@@ -965,7 +985,7 @@ int Jabra::attack(Character *target, BattleContext &context)
     // TODO: implement
     int damage = this->atk;
     target->receiveDamage(damage);
-    return damage; // ko morale do co quy dinh o special
+    return damage-target->getdef(); // ko morale do co quy dinh o special
 }
 
 int Jabra::specialSkill(Character *target, BattleContext &context)
@@ -984,7 +1004,7 @@ int Jabra::specialSkill(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 void Jabra::endTurn(BattleContext &context)
@@ -1014,7 +1034,7 @@ int Blueno::attack(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 int Blueno::specialSkill(Character *target, BattleContext &context)
@@ -1036,7 +1056,7 @@ int Blueno::specialSkill(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 void Blueno::endTurn(BattleContext &context)
@@ -1060,7 +1080,7 @@ int Kalifa::attack(Character *target, BattleContext &context)
     // TODO: implement
     int damage = this->atk;
     target->receiveDamage(damage);
-    return damage;
+    return damage-target->getdef();
 }
 
 int Kalifa::specialSkill(Character *target, BattleContext &context)
@@ -1089,7 +1109,7 @@ int Kalifa::specialSkill(Character *target, BattleContext &context)
     target->receiveDamage(damage);
     if (context.morale < 0)
         context.morale = 0;
-    return damage;
+    return damage-target->getdef();
 }
 
 void Kalifa::endTurn(BattleContext &context)
@@ -1119,7 +1139,7 @@ int Kumadori::attack(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 int Kumadori::specialSkill(Character *target, BattleContext &context)
@@ -1137,7 +1157,7 @@ int Kumadori::specialSkill(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 void Kumadori::endTurn(BattleContext &context)
@@ -1160,7 +1180,7 @@ int Fukurou::attack(Character *target, BattleContext &context)
     // TODO: implement
     int damage = this->atk;
     target->receiveDamage(damage);
-    return damage;
+    return damage-target->getdef();
 }
 
 int Fukurou::specialSkill(Character *target, BattleContext &context)
@@ -1180,7 +1200,7 @@ int Fukurou::specialSkill(Character *target, BattleContext &context)
         if (context.morale < 0)
             context.morale = 0;
     }
-    return damage;
+    return damage-target->getdef();
 }
 
 void Fukurou::endTurn(BattleContext &context)
